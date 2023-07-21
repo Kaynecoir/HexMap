@@ -26,9 +26,19 @@ public class WorldText : MonoBehaviour
 	{
 		return GetMouseWorldPosition(Input.mousePosition, Camera.main);
 	}
+	public static Vector3 GetMouseWorldPosition(Transform transform)
+	{
+		return GetMouseWorldPosition(transform, Input.mousePosition, Camera.main);
+	}
 	public static Vector3 GetMouseWorldPosition(Vector3 screenPosition, Camera worldCamera)
 	{
 		Vector3 worldPosition = worldCamera.ScreenToWorldPoint(screenPosition);
+		return worldPosition;
+	}
+	public static Vector3 GetMouseWorldPosition(Transform transform, Vector3 screenPosition, Camera worldCamera)
+	{
+		Vector3 worldPosition = worldCamera.ScreenToWorldPoint(screenPosition) - transform.position;
+		Debug.Log(worldCamera.ScreenToViewportPoint(screenPosition) - transform.position);
 		return worldPosition;
 	}
 	public static void CreateEmptyMeshArray(int quadCount, out Vector3[] vertices, out Vector3[] normals, out Vector2[] uv, out int[] triangles)
@@ -57,9 +67,9 @@ public class WorldText : MonoBehaviour
 		normals[index * 4 + 3] = Vector3.back;
 
 		uv[index * 4 + 0] = imagePoint + new Vector2(0.01f, 0.01f);
-		uv[index * 4 + 1] = imagePoint;
-		uv[index * 4 + 2] = imagePoint;
-		uv[index * 4 + 3] = imagePoint;
+		uv[index * 4 + 1] = imagePoint + new Vector2(0.01f, 0.02f);
+		uv[index * 4 + 2] = imagePoint + new Vector2(0.02f, 0.02f);
+		uv[index * 4 + 3] = imagePoint + new Vector2(0.02f, 0.01f);
 
 		triangles[index * 6 + 0] = index * 4 + 0;
 		triangles[index * 6 + 1] = index * 4 + 1;

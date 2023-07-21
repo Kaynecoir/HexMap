@@ -28,13 +28,13 @@ public class Grid
 			for(int x = 0; x < width; x++)
 			{
 				//Debug.Log("X: " + x + " y: " + y + " = " + gridArray[y, x]);
-				textMeshArray[y, x] = WorldText.CreateWorldText(gridArray[y, x].ToString(), null, GetWorldPosition(x, y) + new Vector3(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter, TextAlignment.Center, 0);
-				Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y+1), Color.white, 100f);
-				Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x+1, y), Color.white, 100f);
+				//textMeshArray[y, x] = WorldText.CreateWorldText(gridArray[y, x].ToString(), null, GetWorldPosition(x, y) + new Vector3(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter, TextAlignment.Center, 0);
+				//Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y+1), Color.white, 100f);
+				//Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x+1, y), Color.white, 100f);
 			}
 		}
-		Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 100f);
-		Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100f);
+		//Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 100f);
+		//Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100f);
 
 	}
 
@@ -47,7 +47,7 @@ public class Grid
 		if (x >= 0 && x < width && y >= 0 && y < height)
 		{
 			gridArray[y, x] = value;
-			textMeshArray[y, x].text = gridArray[y, x].ToString();
+			//textMeshArray[y, x].text = gridArray[y, x].ToString();
 		}
 	}
 
@@ -65,7 +65,7 @@ public class Grid
 		if (pos.x >= 0 && pos.x < width && pos.y >= 0 && pos.y < height)
 		{
 			gridArray[pos.y, pos.x] = value;
-			textMeshArray[pos.y, pos.x].text = gridArray[pos.y, pos.x].ToString();
+			//textMeshArray[pos.y, pos.x].text = gridArray[pos.y, pos.x].ToString();
 			ChangeValue?.Invoke();
 		}
 	}
