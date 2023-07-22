@@ -8,10 +8,12 @@ public class Testing : MonoBehaviour
 	Material material;
 	MeshFilter meshFilter;
 	public int height, width;
+	public float size;
+	public int force;
 
 	private void Start()
 	{
-		grid = new Grid(height, width, 10f, new Vector3(0, 0));
+		grid = new Grid(height, width, size, new Vector3(0, 0));
 		meshFilter = GetComponent<MeshFilter>();
 		HeatMapVisual heatMapVisual = new HeatMapVisual(grid, meshFilter);
 		//GetComponent<MeshFilter>().mesh = WorldText.CreateTileMesh(grid.GetHeight(), grid.GetWidth(), grid.GetCellSize());
@@ -21,7 +23,7 @@ public class Testing : MonoBehaviour
 		if (Input.GetMouseButton(0))
 		{
 			Vector3 pos = WorldText.GetMouseWorldPosition(this.transform);
-			grid.SetValue(pos, grid.GetValue(pos) + 1);
+			grid.SetValue(pos, grid.GetValue(pos) + force);
 		}
 		if (Input.GetMouseButtonDown(1))
 		{
