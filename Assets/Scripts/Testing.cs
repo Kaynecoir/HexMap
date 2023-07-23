@@ -1,10 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Kars.Object;
 
 public class Testing : MonoBehaviour
 {
-	Grid grid;
+	//Grid grid;
+	Grid<bool> grid;
 	Material material;
 	MeshFilter meshFilter;
 	public int height, width;
@@ -13,9 +16,13 @@ public class Testing : MonoBehaviour
 
 	private void Start()
 	{
-		grid = new Grid(height, width, size, new Vector3(0, 0));
+		//grid = new Grid(height, width, size, new Vector3(0, 0));
+		grid = new Grid<bool>(height, width, size, Vector3.zero, () => false);
+		//Debug.Log("int: " + default(int));
+		//genericClass = new GenericClass<ClassInt>(5, () => new ClassInt() { val = 7 });
+		//genericClass.See();
 		meshFilter = GetComponent<MeshFilter>();
-		HeatMapVisual heatMapVisual = new HeatMapVisual(grid, meshFilter);
+		//HeatMapVisual heatMapVisual = new HeatMapVisual(grid, meshFilter);
 		//GetComponent<MeshFilter>().mesh = WorldText.CreateTileMesh(grid.GetHeight(), grid.GetWidth(), grid.GetCellSize());
 	}
 	private void Update()
@@ -23,7 +30,7 @@ public class Testing : MonoBehaviour
 		if (Input.GetMouseButton(0))
 		{
 			Vector3 pos = WorldText.GetMouseWorldPosition(this.transform);
-			grid.SetValue(pos, grid.GetValue(pos) + force);
+			//grid.SetValue(pos, grid.GetValue(pos) + force );
 		}
 		if (Input.GetMouseButtonDown(1))
 		{
@@ -34,9 +41,9 @@ public class Testing : MonoBehaviour
 
 	private class HeatMapVisual
 	{
-		private Grid grid;
+		private Grid<int> grid;
 		MeshFilter meshFilter;
-		public HeatMapVisual(Grid grid, MeshFilter meshFilter)
+		public HeatMapVisual(Grid<int> grid, MeshFilter meshFilter)
 		{
 			this.grid = grid;
 			this.grid.ChangeValue += UpdateHeatMapVisual;
@@ -52,15 +59,15 @@ public class Testing : MonoBehaviour
 			Vector2[] uv;
 			int[] triangles;
 
-			WorldText.CreateEmptyMeshArray(grid.GetHeight() * grid.GetWidth(), out vertices, out normals, out uv, out triangles);
-			Vector3 baseSize = new Vector3(1, 1) * grid.GetCellSize();
+			WorldText.CreateEmptyMeshArray(grid.Height * grid.Width, out vertices, out normals, out uv, out triangles);
+			Vector3 baseSize = new Vector3(1, 1) * grid.Size;
 			int maxGridValue = 1024;
 
-			for (int y = 0; y < grid.GetHeight(); y++)
+			for (int y = 0; y < grid.Height; y++)
 			{
-				for (int x = 0; x < grid.GetWidth(); x++)
+				for (int x = 0; x < grid.Width; x++)
 				{
-					int index = y * grid.GetWidth() + x;
+					int index = y * grid.Width + x;
 					int gridValue = grid.GetValue(x, y);
 					float gridValueNormalized0, gridValueNormalized1;
 					Vector2 gridCellUV = new Vector2();

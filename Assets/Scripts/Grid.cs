@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Kars.Debug;
 
 public class Grid
 {
@@ -28,7 +29,7 @@ public class Grid
 			for(int x = 0; x < width; x++)
 			{
 				//Debug.Log("X: " + x + " y: " + y + " = " + gridArray[y, x]);
-				//textMeshArray[y, x] = WorldText.CreateWorldText(gridArray[y, x].ToString(), null, GetWorldPosition(x, y) + new Vector3(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter, TextAlignment.Center, 0);
+				textMeshArray[y, x] = DebugUtilites.CreateWorldText(gridArray[y, x].ToString(), null, GetWorldPosition(x, y) + new Vector3(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter, TextAlignment.Center, 0);
 				//Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y+1), Color.white, 100f);
 				//Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x+1, y), Color.white, 100f);
 			}
