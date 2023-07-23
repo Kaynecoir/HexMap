@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Kars.Object;
+using Kars.Debug;
 
 public class Testing : MonoBehaviour
 {
 	//Grid grid;
-	Grid<bool> grid;
+	Grid<int> grid;
 	Material material;
 	MeshFilter meshFilter;
 	public int height, width;
@@ -16,25 +17,22 @@ public class Testing : MonoBehaviour
 
 	private void Start()
 	{
-		//grid = new Grid(height, width, size, new Vector3(0, 0));
-		grid = new Grid<bool>(height, width, size, Vector3.zero, () => false);
-		//Debug.Log("int: " + default(int));
-		//genericClass = new GenericClass<ClassInt>(5, () => new ClassInt() { val = 7 });
-		//genericClass.See();
+		grid = new Grid<int>(height, width, size, transform.position, () => 0, false);
+
 		meshFilter = GetComponent<MeshFilter>();
-		//HeatMapVisual heatMapVisual = new HeatMapVisual(grid, meshFilter);
-		//GetComponent<MeshFilter>().mesh = WorldText.CreateTileMesh(grid.GetHeight(), grid.GetWidth(), grid.GetCellSize());
+		HeatMapVisual heatMapVisual = new HeatMapVisual(grid, meshFilter, transform);
 	}
 	private void Update()
 	{
 		if (Input.GetMouseButton(0))
 		{
-			Vector3 pos = WorldText.GetMouseWorldPosition(this.transform);
-			//grid.SetValue(pos, grid.GetValue(pos) + force );
+			Vector3 pos = DebugUtilites.GetMouseWorldPosition();
+
+			grid.SetValue(pos, grid.GetValue(pos) + force );
 		}
 		if (Input.GetMouseButtonDown(1))
 		{
-			Vector3 pos = WorldText.GetMouseWorldPosition(this.transform);
+			Vector3 pos = DebugUtilites.GetMouseWorldPosition(this.transform.position);
 			Debug.Log(grid.GetValue(pos));
 		}
 	}
@@ -43,25 +41,28 @@ public class Testing : MonoBehaviour
 	{
 		private Grid<int> grid;
 		MeshFilter meshFilter;
-		public HeatMapVisual(Grid<int> grid, MeshFilter meshFilter)
+		Transform transform;
+
+		Vector3[] vertices;
+		Vector3[] normals;
+		Vector2[] uv;
+		int[] triangles;
+		public HeatMapVisual(Grid<int> grid, MeshFilter meshFilter, Transform transform)
 		{
 			this.grid = grid;
 			this.grid.ChangeValue += UpdateHeatMapVisual;
 			this.meshFilter = meshFilter;
+			this.transform = transform;
+
+			KarsMesh.CreateEmptyMeshArray(grid.Height * grid.Width, out vertices, out normals, out uv, out triangles);
 
 			UpdateHeatMapVisual();
 		}
 
 		public void UpdateHeatMapVisual()
 		{
-			Vector3[] vertices;
-			Vector3[] normals;
-			Vector2[] uv;
-			int[] triangles;
-
-			WorldText.CreateEmptyMeshArray(grid.Height * grid.Width, out vertices, out normals, out uv, out triangles);
 			Vector3 baseSize = new Vector3(1, 1) * grid.Size;
-			int maxGridValue = 1024;
+			int maxGridValue = 512;
 
 			for (int y = 0; y < grid.Height; y++)
 			{
@@ -69,28 +70,17 @@ public class Testing : MonoBehaviour
 				{
 					int index = y * grid.Width + x;
 					int gridValue = grid.GetValue(x, y);
-					float gridValueNormalized0, gridValueNormalized1;
+					float gridValueNormalized;
 					Vector2 gridCellUV = new Vector2();
-					if (gridValue < 0.9f*256)
-					{
-						gridValueNormalized0 = Mathf.Clamp01((float)gridValue / 256);
-						gridCellUV = new Vector2(0.0f, gridValueNormalized0);
-					}
-					else if(gridValue >= 0.9f*256 && gridValue < 0.9f*1024)
-					{
-						gridValueNormalized1 = Mathf.Clamp01((float)(gridValue - 0.9f * 256) / 768);
-						gridCellUV = new Vector2(gridValueNormalized1, 0.9f);
-					}
-					else
-					{
-						gridCellUV = new Vector2(0.9f, 0.9f);
-					}
+
 					if(gridValue > maxGridValue-8)
 					{
 						grid.SetValue(x, y, maxGridValue-8);
 						gridValue = maxGridValue - 8;
 					}
-					WorldText.AddToMeshArray(vertices, normals, uv, triangles, index, grid.GetWorldPosition(x, y) + baseSize * 0.5f, 0f, baseSize, Vector3.zero, gridCellUV);
+					gridValueNormalized = Mathf.Clamp01((float)(gridValue) / maxGridValue);
+					gridCellUV = new Vector2(gridValueNormalized, 0.0f);
+					KarsMesh.AddToMeshArray(vertices, normals, uv, triangles, index, -transform.position + grid.GetWorldPosition(x, y) + baseSize * 0.5f, 0f, baseSize, Vector3.zero, gridCellUV);
 				}
 			}
 			Mesh mesh = new Mesh();

@@ -50,11 +50,6 @@ public class WorldText : MonoBehaviour
 	}
 	public static void AddToMeshArray(Vector3[] vertices, Vector3[] normals, Vector2[] uv, int[] triangles, int index, Vector3 worldPosition, float f, Vector3 tileSize, Vector3 v3, Vector2 imagePoint)
 	{
-		//tileSize *= .5f;
-		//vertices[index * 4 + 0] = new Vector3(-tileSize.x, -tileSize.y);
-		//vertices[index * 4 + 1] = new Vector3(-tileSize.x,  tileSize.y);
-		//vertices[index * 4 + 2] = new Vector3( tileSize.x,  tileSize.y);
-		//vertices[index * 4 + 3] = new Vector3( tileSize.x, -tileSize.y);
 		tileSize *= .5f;
 		vertices[index * 4 + 0] = new Vector3(-tileSize.x, -tileSize.y) + worldPosition;
 		vertices[index * 4 + 1] = new Vector3(-tileSize.x,  tileSize.y) + worldPosition;
@@ -66,10 +61,10 @@ public class WorldText : MonoBehaviour
 		normals[index * 4 + 2] = Vector3.back;
 		normals[index * 4 + 3] = Vector3.back;
 
-		uv[index * 4 + 0] = imagePoint + new Vector2(0.01f, 0.01f);
-		uv[index * 4 + 1] = imagePoint + new Vector2(0.01f, 0.02f);
-		uv[index * 4 + 2] = imagePoint + new Vector2(0.02f, 0.02f);
-		uv[index * 4 + 3] = imagePoint + new Vector2(0.02f, 0.01f);
+		uv[index * 4 + 0] = imagePoint + new Vector2(0.0f, 0.0f);
+		uv[index * 4 + 1] = imagePoint + new Vector2(0.0f, 1.0f);
+		uv[index * 4 + 2] = imagePoint + new Vector2(0.0f, 1.0f);
+		uv[index * 4 + 3] = imagePoint + new Vector2(0.0f, 0.0f);
 
 		triangles[index * 6 + 0] = index * 4 + 0;
 		triangles[index * 6 + 1] = index * 4 + 1;
@@ -92,10 +87,10 @@ public class WorldText : MonoBehaviour
 		vertices[index * 4 + 2] = new Vector3(tileSize.x, tileSize.y) + worldPosition;
 		vertices[index * 4 + 3] = new Vector3(tileSize.x, -tileSize.y) + worldPosition;
 
-		uv[index * 4 + 0] = imagePoint + new Vector2(0.01f, 0.01f);
-		uv[index * 4 + 1] = imagePoint;
-		uv[index * 4 + 2] = imagePoint;
-		uv[index * 4 + 3] = imagePoint;
+		uv[index * 4 + 0] = imagePoint + new Vector2(0.0f, 0.0f);
+		uv[index * 4 + 1] = imagePoint + new Vector2(0.0f, 1.0f);
+		uv[index * 4 + 2] = imagePoint + new Vector2(0.0f, 1.0f);
+		uv[index * 4 + 3] = imagePoint + new Vector2(0.0f, 0.0f);
 
 		triangles[index * 6 + 0] = index * 4 + 0;
 		triangles[index * 6 + 1] = index * 4 + 1;
