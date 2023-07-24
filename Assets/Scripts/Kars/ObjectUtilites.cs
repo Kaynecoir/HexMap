@@ -26,25 +26,59 @@ namespace Kars.Object
 			Size = size;
 			PositionToWorld = positionToWorld;
 			gridArray = new TGridObject[Height, Width];
-			if (isDebuging) textArray = new TextMesh[Height, Width];
 			for (int y = 0; y < height; y++)
 			{
 				for (int x = 0; x < width; x++)
 				{
 					TGridObject t = createGridObject();
 					gridArray[y, x] = t;
-					if (isDebuging)
-					{
-						textArray[y, x] = DebugUtilites.CreateWorldText(t.ToString(), null, GetWorldPosition(x, y) + new Vector3(Size, Size) * 0.5f, 40, Color.white, TextAnchor.MiddleCenter, TextAlignment.Center, 0);
-						UnityEngine.Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
-						UnityEngine.Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
-					}
 				}
-				if (isDebuging)
+			}
+		}
+		public Grid(int height, int width, float size, Vector3 positionToWorld, Func<Grid<TGridObject>, int, int, TGridObject> createGridObject, bool isDebuging = false)
+		{
+			Height = height;
+			Width = width;
+			Size = size;
+			PositionToWorld = positionToWorld;
+			gridArray = new TGridObject[Height, Width];
+			for (int y = 0; y < height; y++)
+			{
+				for (int x = 0; x < width; x++)
 				{
-					UnityEngine.Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 100f);
-					UnityEngine.Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100f);
+					TGridObject t = createGridObject(this, y, x);
+					gridArray[y, x] = t;
+
 				}
+			}
+		}
+
+		public TGridObject this[int y, int x]
+		{
+			get
+			{
+				return gridArray[y, x];
+			}
+			set
+			{
+				gridArray[y, x] = value;
+			}
+		}
+		public void SeeDebug()
+		{
+			textArray = new TextMesh[Height, Width];
+
+			for (int y = 0; y < Height; y++)
+			{
+				for (int x = 0; x < Width; x++)
+				{
+					textArray[y, x] = DebugUtilites.CreateWorldText(gridArray[y, x].ToString(), null, GetWorldPosition(x, y) + new Vector3(Size, Size) * 0.5f, 40, Color.white, TextAnchor.MiddleCenter, TextAlignment.Center, 0);
+					UnityEngine.Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
+					UnityEngine.Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
+
+				}
+				UnityEngine.Debug.DrawLine(GetWorldPosition(0, Height), GetWorldPosition(Width, Height), Color.white, 100f);
+				UnityEngine.Debug.DrawLine(GetWorldPosition(Width, 0), GetWorldPosition(Width, Height), Color.white, 100f);
 			}
 		}
 		public Vector3 GetWorldPosition(int x, int y) => new Vector3(x, y) * Size + PositionToWorld;
