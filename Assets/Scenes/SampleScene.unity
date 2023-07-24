@@ -154,9 +154,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b5c257a3ca43894a8058ba20d538b94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  height: 9
-  width: 16
-  size: 10
+  height: 18
+  width: 32
+  size: 5
   force: 4
 --- !u!4 &274281777
 Transform:

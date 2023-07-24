@@ -6,7 +6,6 @@ using Kars.Debug;
 
 namespace Kars.Object
 {
-
     class Grid<TGridObject>
     {
 		public int Height { get; private set; }
@@ -59,12 +58,12 @@ namespace Kars.Object
 			{
 				return gridArray[y, x];
 			}
-			set
+			private set
 			{
 				gridArray[y, x] = value;
 			}
 		}
-		public void SeeDebug()
+		public void SeeDebug(float duration = 100f)
 		{
 			textArray = new TextMesh[Height, Width];
 
@@ -73,12 +72,12 @@ namespace Kars.Object
 				for (int x = 0; x < Width; x++)
 				{
 					textArray[y, x] = DebugUtilites.CreateWorldText(gridArray[y, x].ToString(), null, GetWorldPosition(x, y) + new Vector3(Size, Size) * 0.5f, 40, Color.white, TextAnchor.MiddleCenter, TextAlignment.Center, 0);
-					UnityEngine.Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
-					UnityEngine.Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
+					UnityEngine.Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, duration);
+					UnityEngine.Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, duration);
 
 				}
-				UnityEngine.Debug.DrawLine(GetWorldPosition(0, Height), GetWorldPosition(Width, Height), Color.white, 100f);
-				UnityEngine.Debug.DrawLine(GetWorldPosition(Width, 0), GetWorldPosition(Width, Height), Color.white, 100f);
+				UnityEngine.Debug.DrawLine(GetWorldPosition(0, Height), GetWorldPosition(Width, Height), Color.white, duration);
+				UnityEngine.Debug.DrawLine(GetWorldPosition(Width, 0), GetWorldPosition(Width, Height), Color.white, duration);
 			}
 		}
 		public Vector3 GetWorldPosition(int x, int y) => new Vector3(x, y) * Size + PositionToWorld;
@@ -92,6 +91,8 @@ namespace Kars.Object
 		{
 			x = Mathf.RoundToInt((worldPosition - PositionToWorld).x / Size - 0.5f);
 			y = Mathf.RoundToInt((worldPosition - PositionToWorld).y / Size - 0.5f);
+			x = x < Width && x >= 0 ? x : 0;
+			y = y < Height && y >= 0 ? y : 0;
 
 			return new Vector3Int(x, y);
 		}
@@ -168,6 +169,35 @@ namespace Kars.Object
 			triangles[index * 6 + 3] = index * 4 + 0;
 			triangles[index * 6 + 4] = index * 4 + 2;
 			triangles[index * 6 + 5] = index * 4 + 3;
+		}
+	}
+
+	class Hex
+	{
+		private Vector3 worldPosition;
+		private Vector3[] corner;
+		private float radius;
+		private bool isVerical;
+
+		public Hex(float radius, Vector3 worldPosition)
+		{
+			this.radius = radius;
+			this.worldPosition = worldPosition;
+			corner = new Vector3[6];
+
+			for(int i = 0; i < 6; i++)
+			{
+
+				corner[i] = new Vector3(Mathf.Cos(60 * i + (isVerical ? 90 : 0)), Mathf.Sin(60 * i + (isVerical ? 90 : 0))) * radius + worldPosition;
+			}
+		}
+
+		public void DrawHex()
+		{
+			for(int i = 0; i < 6; i++)
+			{
+				UnityEngine.Debug.DrawLine(corner[i], corner[i + 1 > 6 ? 0 : i + 1], Color.white);
+			}
 		}
 	}
 }
