@@ -8,16 +8,20 @@ namespace Kars.Object
 {
     class Grid<TGridObject>
     {
-		public int Height { get; private set; }
-        public int Width { get; private set; }
-        public float Size { get; private set; }
-        public Vector3 PositionToWorld { get; private set; }
-		private TextMesh[,] textArray;
-        public TGridObject[,] gridArray { get; private set; }
+		public int Height { get; protected set; }
+        public int Width { get; protected set; }
+        public float Size { get; protected set; }
+        public Vector3 PositionToWorld { get; protected set; }
+		protected TextMesh[,] textArray;
+        public TGridObject[,] gridArray { get; protected set; }
 
 		public delegate void VoidFunc();
 		public event VoidFunc ChangeValue;
 
+		public Grid()
+		{
+
+		}
 		public Grid(int height, int width, float size, Vector3 positionToWorld, Func<TGridObject> createGridObject, bool isDebuging = false)
 		{
 			Height = height;
@@ -174,21 +178,44 @@ namespace Kars.Object
 
 	class Hex
 	{
-		private Vector3 worldPosition;
-		private Vector3[] corner;
-		private float radius;
-		private bool isVerical;
+		public HexGrid hexGrid;
+		private int gridHeight, gridWidth;
+		public Vector3 worldPosition;
+		public Vector3[] corner { get; private set; }
+		public List<Hex> neigbourHex;
+		public int positionX { get; private set; }
+		public int positionY { get; private set; }
+		public float radius { get; private set; }
+		public float height { get; private set; }	// for 3D
+		public bool isVertical { get; private set; }
 
-		public Hex(float radius, Vector3 worldPosition)
+		public Hex(float radius, bool isVertical = false)
+		{
+			this.radius = radius;
+			this.worldPosition = Vector3.zero;
+			this.isVertical = isVertical;
+			corner = new Vector3[6];
+
+			//SetCorner();
+		}
+		public Hex(float radius, Vector3 worldPosition, bool isVertical = false)
 		{
 			this.radius = radius;
 			this.worldPosition = worldPosition;
+			this.isVertical = isVertical;
 			corner = new Vector3[6];
 
-			for(int i = 0; i < 6; i++)
-			{
+			SetCorner();
+		}
 
-				corner[i] = new Vector3(Mathf.Cos(60 * i + (isVerical ? 90 : 0)), Mathf.Sin(60 * i + (isVerical ? 90 : 0))) * radius + worldPosition;
+		public void SetCorner()
+		{
+			for (int i = 0; i < 6; i++)
+			{
+				float angel_del = 60 * i + (isVertical ? 90 : 0);
+				float angel_rad = angel_del / 180 * MathF.PI;
+				corner[i] = new Vector3(Mathf.Cos(angel_rad), Mathf.Sin(angel_rad)) * radius + worldPosition;
+				UnityEngine.Debug.Log(i + ": " + corner[i]);
 			}
 		}
 
@@ -196,8 +223,42 @@ namespace Kars.Object
 		{
 			for(int i = 0; i < 6; i++)
 			{
-				UnityEngine.Debug.DrawLine(corner[i], corner[i + 1 > 6 ? 0 : i + 1], Color.white);
+				UnityEngine.Debug.Log(corner[i]);
+				UnityEngine.Debug.DrawLine(corner[i], corner[(i >= 5 ? 0 : (i + 1))], Color.red);
 			}
+		}
+		
+		public Mesh CreateHexMesh()
+		{
+			Mesh mesh = new Mesh();
+			mesh.name = "Hex";
+			Vector3[] vertices = new Vector3[7];
+			Vector3[] normals = new Vector3[7];
+			Vector2[] uv = new Vector2[7];
+			for(int i = 0; i < 6; i++)
+			{
+				vertices[i] = corner[i];
+				normals[i] = Vector3.back;
+				uv[i] = corner[i] / radius / 2 + new Vector3(0.5f, 0.5f);
+			}
+			vertices[6] = new Vector3(0, 0);
+			normals[6] = Vector3.back;
+			uv[6] = new Vector2(0.5f, 0.5f);
+
+			int[] triangles = new int[18];
+			for(int i = 0; i < 6; i++)
+			{
+				triangles[i * 3 + 0] = 6;
+				triangles[i * 3 + 1] = i == 5 ? 0 : i+1;
+				triangles[i * 3 + 2] = i;
+			}
+
+			mesh.vertices = vertices;
+			mesh.normals = normals;
+			mesh.uv = uv;
+			mesh.triangles = triangles;
+
+			return mesh;
 		}
 	}
 }
