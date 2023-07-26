@@ -29,6 +29,11 @@ namespace Kars.Debug
 
 			return textObj;
 		}
+		public static void RotateSysCoord(float angel_deg, ref float x, ref float y)
+		{
+			x *= Mathf.Cos(angel_deg / 180 * Mathf.PI);
+			y *= Mathf.Sin(angel_deg / 180 * Mathf.PI);
+		}
 	}
 }
 

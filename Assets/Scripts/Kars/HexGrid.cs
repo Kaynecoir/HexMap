@@ -12,24 +12,30 @@ namespace Kars.Object
 		public int Width { get; protected set; }
 		public float Size { get; protected set; }
 		public float Radius { get; protected set; }
-		public Vector3 PositionToWorld { get; protected set; }
+		public float littleRadius { get; protected set; }
+		public bool isVertical { get; private set; }
+		public Vector3 PositionToCenter { get; protected set; }
+		public Mesh gridMesh;
 		protected TextMesh[,] textArray;
 		public Hex[,] gridArray { get; protected set; }
 
 		public delegate void VoidFunc();
 		public event VoidFunc ChangeValue;
-		public HexGrid(int height, int width, float size, Vector3 positionToWorld, Func<HexGrid, int, int, Hex> createGridObject, bool isVertical = false, bool isDebuging = false)
+		public HexGrid(int height, int width, float radius, Vector3 worldPosition, Func<HexGrid, int, int, Hex> createGridObject, Vector3 positionToCenter, bool isVertical = false, bool isDebuging = false)
 		{
 			Height = height;
 			Width = width;
-			Size = size;
-			PositionToWorld = positionToWorld;
+			Radius = radius;
+			littleRadius = radius * Mathf.Sin(Mathf.PI / 3);
+			PositionToCenter = positionToCenter;
+			this.isVertical = isVertical;
 			gridArray = new Hex[Height, Width];
 			for (int y = 0; y < height; y++)
 			{
 				for (int x = 0; x < width; x++)
 				{
-					Hex h = new Hex(Radius, GetWorldPosition(x, y));
+
+					Hex h = new Hex(Radius, GetPositionFromCenter(x, y), this.isVertical);
 					UnityEngine.Debug.Log(">>> " + x + " " + y + ": " + h.worldPosition);
 					h.SetCorner();
 					gridArray[y, x] = h;
@@ -56,40 +62,88 @@ namespace Kars.Object
 			{
 				for (int x = 0; x < Width; x++)
 				{
-					textArray[y, x] = DebugUtilites.CreateWorldText(gridArray[y, x].ToString(), null, GetWorldPosition(x, y) + new Vector3(Size, Size) * 0.5f, 40, Color.white, TextAnchor.MiddleCenter, TextAlignment.Center, 0);
-					UnityEngine.Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, duration);
-					UnityEngine.Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, duration);
+					textArray[y, x] = DebugUtilites.CreateWorldText(gridArray[y, x].ToString(), null, GetPositionFromCenter(x, y) + new Vector3(Size, Size) * 0.5f, 40, Color.white, TextAnchor.MiddleCenter, TextAlignment.Center, 0);
+					UnityEngine.Debug.DrawLine(GetPositionFromCenter(x, y), GetPositionFromCenter(x, y + 1), Color.white, duration);
+					UnityEngine.Debug.DrawLine(GetPositionFromCenter(x, y), GetPositionFromCenter(x + 1, y), Color.white, duration);
 
 				}
-				UnityEngine.Debug.DrawLine(GetWorldPosition(0, Height), GetWorldPosition(Width, Height), Color.white, duration);
-				UnityEngine.Debug.DrawLine(GetWorldPosition(Width, 0), GetWorldPosition(Width, Height), Color.white, duration);
+				UnityEngine.Debug.DrawLine(GetPositionFromCenter(0, Height), GetPositionFromCenter(Width, Height), Color.white, duration);
+				UnityEngine.Debug.DrawLine(GetPositionFromCenter(Width, 0), GetPositionFromCenter(Width, Height), Color.white, duration);
 			}
 		}
-		public Vector3 GetWorldPosition(int x, int y)
+		public Vector3 GetPositionFromCenter(int x, int y)
 		{
-			Vector3 pos;
-			float step;
-			if (x % 2 == 0)
+			Vector3 pos = Vector3.zero;
+			if(isVertical)
 			{
-				step = Radius / 2 * 3;
-				pos = new Vector3(x * Size, y * Size);
+				pos = new Vector3((2 * x + 0) * MathF.Sqrt(3) / 2, y * 1.5f) * Radius + PositionToCenter;
+				if (y % 2 == 1)
+				{
+					pos = new Vector3((2 * x + 1) * MathF.Sqrt(3) / 2, y * 1.5f) * Radius + PositionToCenter;
+				}
 			}
-			return new Vector3(x, y) * Size + PositionToWorld;
+			else
+			{
+				pos = new Vector3(x * 1.5f, (2 * y + 0) * MathF.Sqrt(3) / 2) * Radius + PositionToCenter;
+				if (x % 2 == 1)
+				{
+					pos = new Vector3(x * 1.5f, (2 * y + 1) * MathF.Sqrt(3) / 2) * Radius + PositionToCenter;
+				}
+			}
+
+			return pos;
 		}
 		public Vector3Int GetXY(Vector3 worldPosition)
 		{
-			int x, y;
-
-			return GetXY(worldPosition, out x, out y);
+			return GetXY(worldPosition, out int x, out int y);
 		}
-		public Vector3Int GetXY(Vector3 worldPosition, out int x, out int y)
+		public Vector3Int GetXY(Vector3 CursorPosition, out int x, out int y)
 		{
-			x = Mathf.RoundToInt((worldPosition - PositionToWorld).x / Size - 0.5f);
-			y = Mathf.RoundToInt((worldPosition - PositionToWorld).y / Size - 0.5f);
-			x = x < Width && x >= 0 ? x : 0;
-			y = y < Height && y >= 0 ? y : 0;
+			x = 0; y = 0;
+			Vector3 CursorToCenter = CursorPosition - PositionToCenter;
 
-			return new Vector3Int(x, y);
+			if (isVertical)
+			{
+				x = Mathf.RoundToInt(CursorToCenter.x / (2 * littleRadius) - 0.0f);
+				y = Mathf.RoundToInt(CursorToCenter.y * 2 / (3 * Radius) - 0.0f);
+
+				if (y % 2 == 1 && x >= 0 && x < Width && y >= 0 && y < Height)
+				{
+					if (x - 1 >= 0 &&	gridArray[y, x - 1].inHexArea(CursorToCenter)) return new Vector3Int(--x, y);
+					if (				gridArray[y, x].inHexArea(CursorToCenter)) return new Vector3Int(x, y);
+					if (y - 1 >= 0 &&	gridArray[y - 1, x].inHexArea(CursorToCenter)) return new Vector3Int(x, --y);
+				}
+				else if (y % 2 == 0 && y >= 0 && y < Height)
+				{
+					if (								gridArray[y, x].inHexArea(CursorToCenter)) return new Vector3Int(x, y);
+					if (y - 1 >= 0 &&					gridArray[y - 1, x].inHexArea(CursorToCenter)) return new Vector3Int(x, --y);
+					if (y - 1 >= 0 && x + 1 < Width &&	gridArray[y - 1, x + 1].inHexArea(CursorToCenter)) return new Vector3Int(++x, --y);
+				}
+			}
+			else
+			{
+				y = Mathf.RoundToInt(CursorToCenter.y / (2 * littleRadius) - 0.0f);
+				x = Mathf.RoundToInt(CursorToCenter.x * 2 / (3 * Radius) - 0.0f);
+
+				UnityEngine.Debug.Log(x + " " + y);
+
+				if (x % 2 == 1 && x >= 0 && x < Width && y >= 0 && y < Height)
+				{
+					UnityEngine.Debug.Log("X");
+					if (y - 1 >= 0 && gridArray[y - 1, x].inHexArea(CursorToCenter)) UnityEngine.Debug.Log("1=" + x + " " + y); return new Vector3Int(x, --y);
+					if (gridArray[y, x].inHexArea(CursorToCenter)) UnityEngine.Debug.Log("2=" + x + " " + y); return new Vector3Int(x, y);
+					if (x - 1 >= 0 && gridArray[y, x - 1].inHexArea(CursorToCenter)) UnityEngine.Debug.Log("3=" + x + " " + y); return new Vector3Int(--x, y);
+				}
+				else if (x % 2 == 0 && x >= 0 && x < Width)
+				{
+					UnityEngine.Debug.Log("O");
+
+					if (gridArray[y, x].inHexArea(CursorToCenter))										return new Vector3Int(x, y);
+					if (x - 1 >= 0 && gridArray[y, x - 1].inHexArea(CursorToCenter))					return new Vector3Int(--x, y);
+					if (x - 1 >= 0 && y - 1 >= 0 && gridArray[y - 1, x - 1].inHexArea(CursorToCenter))	return new Vector3Int(--x, --y);
+				}
+			}
+			return Vector3Int.zero;
 		}
 		public void SetValue(Vector3 worldPosition, Hex value)
 		{
@@ -108,8 +162,7 @@ namespace Kars.Object
 		}
 		public Hex GetValue(Vector3 worldPosition)
 		{
-			int x, y;
-			GetXY(worldPosition, out x, out y);
+			GetXY(worldPosition, out int x, out int y);
 			return GetValue(x, y);
 		}
 		public Hex GetValue(int x, int y)
@@ -122,8 +175,8 @@ namespace Kars.Object
 		}
 		public Mesh CreateMeshArray()
 		{
-			Mesh mesh = new Mesh();
-			mesh.name = "HexGrid";
+			gridMesh = new Mesh();
+			gridMesh.name = "HexGrid";
 			Vector3[] vertices = new Vector3[(Width * Height) * 7];
 			Vector3[] normals = new Vector3[(Width * Height) * 7];
 			Vector2[] uv = new Vector2[(Width * Height) * 7];
@@ -137,13 +190,38 @@ namespace Kars.Object
 					AddHexMeshToArray(GetValue(x, y), vertices, normals, uv, triangles, index);
 				}
 			}
-			mesh.vertices = vertices;
-			mesh.normals = normals;
-			mesh.uv = uv;
-			mesh.triangles = triangles;
+			gridMesh.vertices = vertices;
+			gridMesh.normals = normals;
+			gridMesh.uv = uv;
+			gridMesh.triangles = triangles;
 
-			return mesh;
+			return gridMesh;
 		}
+		public Mesh CreateMeshArray(Vector2 uvPoint)
+		{
+			gridMesh = new Mesh();
+			gridMesh.name = "HexGrid";
+			Vector3[] vertices = new Vector3[(Width * Height) * 7];
+			Vector3[] normals = new Vector3[(Width * Height) * 7];
+			Vector2[] uv = new Vector2[(Width * Height) * 7];
+			int[] triangles = new int[(Width * Height) * 18];
+
+			for (int y = 0; y < Height; y++)
+			{
+				for (int x = 0; x < Width; x++)
+				{
+					int index = y * Width + x;
+					AddHexMeshToArray(GetValue(x, y), vertices, normals, uv, triangles, index, uvPoint);
+				}
+			}
+			gridMesh.vertices = vertices;
+			gridMesh.normals = normals;
+			gridMesh.uv = uv;
+			gridMesh.triangles = triangles;
+
+			return gridMesh;
+		}
+
 		public void AddHexMeshToArray(Hex hex, Vector3[] vertices, Vector3[] normals, Vector2[] uv, int[] triangles, int index)
 		{
 			for (int i = 0; i < 6; i++)
@@ -156,6 +234,25 @@ namespace Kars.Object
 			vertices[index * 7 + 6] = hex.worldPosition;// + worldPosition;
 			normals[index * 7 + 6] = Vector3.back;
 			uv[index * 7 + 6] = new Vector2(0.5f, 0.5f);
+
+			for (int i = 0; i < 6; i++)
+			{
+				triangles[index * 18 + i * 3 + 0] = (index * 7 + 6);
+				triangles[index * 18 + i * 3 + 1] = ((i == 5) ? (index * 7 + 0) : (index * 7 + i + 1));
+				triangles[index * 18 + i * 3 + 2] = (index * 7 + i);
+			}
+		}
+		public void AddHexMeshToArray(Hex hex, Vector3[] vertices, Vector3[] normals, Vector2[] uv, int[] triangles, int index, Vector2 uvPoint)
+		{
+			for (int i = 0; i < 6; i++)
+			{
+				vertices[index * 7 + i] = hex.corner[i];
+				normals[index * 7 + i] = Vector3.back;
+				uv[index * 7 + i] = uvPoint;
+			}
+			vertices[index * 7 + 6] = hex.worldPosition;
+			normals[index * 7 + 6] = Vector3.back;
+			uv[index * 7 + 6] = uvPoint;
 
 			for (int i = 0; i < 6; i++)
 			{

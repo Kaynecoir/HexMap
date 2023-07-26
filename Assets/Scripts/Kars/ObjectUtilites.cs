@@ -186,12 +186,14 @@ namespace Kars.Object
 		public int positionX { get; private set; }
 		public int positionY { get; private set; }
 		public float radius { get; private set; }
+		public float littleRadius { get; protected set; }
 		public float height { get; private set; }	// for 3D
 		public bool isVertical { get; private set; }
 
 		public Hex(float radius, bool isVertical = false)
 		{
 			this.radius = radius;
+			this.littleRadius = radius * Mathf.Sin(Mathf.PI / 3);
 			this.worldPosition = Vector3.zero;
 			this.isVertical = isVertical;
 			corner = new Vector3[6];
@@ -201,6 +203,7 @@ namespace Kars.Object
 		public Hex(float radius, Vector3 worldPosition, bool isVertical = false)
 		{
 			this.radius = radius;
+			this.littleRadius = radius * Mathf.Sin(Mathf.PI / 3);
 			this.worldPosition = worldPosition;
 			this.isVertical = isVertical;
 			corner = new Vector3[6];
@@ -215,16 +218,35 @@ namespace Kars.Object
 				float angel_del = 60 * i + (isVertical ? 90 : 0);
 				float angel_rad = angel_del / 180 * MathF.PI;
 				corner[i] = new Vector3(Mathf.Cos(angel_rad), Mathf.Sin(angel_rad)) * radius + worldPosition;
-				UnityEngine.Debug.Log(i + ": " + corner[i]);
 			}
+		}
+		public bool inTrianArea(float x, float y)
+		{
+			if (x < radius / 2 && x >= 0) return Mathf.Tan(Mathf.PI / 3) > x / y;
+			if (x >= radius / 2 && x <= radius) return Mathf.Tan(Mathf.PI / 3) > (radius - x) / y;
+			return false;
+		}
+		public bool inHexArea(Vector3 pos)
+		{
+			return inHexArea(pos.x, pos.y);
+		}
+		public bool inHexArea(float x, float y)
+		{
+			float angel_del = 0;
+
+			for (int i = 0; i < 6; i++)
+			{
+				DebugUtilites.RotateSysCoord(angel_del, ref x, ref y);
+				if (inTrianArea(x, y)) return true;
+				angel_del += 60;
+			}
+			return false;
 		}
 
 		public void DrawHex()
 		{
 			for(int i = 0; i < 6; i++)
 			{
-				UnityEngine.Debug.Log(corner[i]);
-				UnityEngine.Debug.DrawLine(corner[i], corner[(i >= 5 ? 0 : (i + 1))], Color.red);
 			}
 		}
 		
