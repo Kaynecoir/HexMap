@@ -101,46 +101,63 @@ namespace Kars.Object
 		{
 			x = 0; y = 0;
 			Vector3 CursorToCenter = CursorPosition - PositionToCenter;
+			UnityEngine.Debug.Log("cursor: " + CursorPosition);
+			UnityEngine.Debug.Log("toCenter: " + PositionToCenter);
+
 
 			if (isVertical)
 			{
-				x = Mathf.RoundToInt(CursorToCenter.x / (2 * littleRadius) - 0.0f);
 				y = Mathf.RoundToInt(CursorToCenter.y * 2 / (3 * Radius) - 0.0f);
+				x = Mathf.RoundToInt((CursorToCenter.x / littleRadius - (y % 2) - 0) / 2);
+				
+				UnityEngine.Debug.Log(x + " " + y);
 
-				if (y % 2 == 1 && x >= 0 && x < Width && y >= 0 && y < Height)
+				if (x >= 0 && x < Width && y >= 0 && y < Height)
 				{
-					if (x - 1 >= 0 &&	gridArray[y, x - 1].inHexArea(CursorToCenter)) return new Vector3Int(--x, y);
-					if (				gridArray[y, x].inHexArea(CursorToCenter)) return new Vector3Int(x, y);
-					if (y - 1 >= 0 &&	gridArray[y - 1, x].inHexArea(CursorToCenter)) return new Vector3Int(x, --y);
-				}
-				else if (y % 2 == 0 && y >= 0 && y < Height)
-				{
-					if (								gridArray[y, x].inHexArea(CursorToCenter)) return new Vector3Int(x, y);
-					if (y - 1 >= 0 &&					gridArray[y - 1, x].inHexArea(CursorToCenter)) return new Vector3Int(x, --y);
-					if (y - 1 >= 0 && x + 1 < Width &&	gridArray[y - 1, x + 1].inHexArea(CursorToCenter)) return new Vector3Int(++x, --y);
+					UnityEngine.Debug.Log("O");
+
+					if (				gridArray[y, x].inHexArea(CursorToCenter)) 
+					{
+						UnityEngine.Debug.Log("1: " + (gridArray[y, x].worldPosition - CursorToCenter).magnitude); 
+						return new Vector3Int(x, y);
+					}
+					if (y - 1 >= 0 &&	gridArray[y - 1, x].inHexArea(CursorToCenter)) 
+					{
+						UnityEngine.Debug.Log("2: " + (gridArray[y-1, x].worldPosition - CursorToCenter)); 
+						return new Vector3Int(x, --y);
+					}
+					if (x - 1 >= 0 &&	gridArray[y, x - 1].inHexArea(CursorToCenter)) 
+					{
+						UnityEngine.Debug.Log("3: " + (gridArray[y, x-1].worldPosition - CursorToCenter).magnitude); 
+						return new Vector3Int(--x, y);
+					}
 				}
 			}
 			else
 			{
-				y = Mathf.RoundToInt(CursorToCenter.y / (2 * littleRadius) - 0.0f);
 				x = Mathf.RoundToInt(CursorToCenter.x * 2 / (3 * Radius) - 0.0f);
+				y = Mathf.RoundToInt((CursorToCenter.y / littleRadius - (x % 2) - 0.0f) / 2);
 
 				UnityEngine.Debug.Log(x + " " + y);
 
-				if (x % 2 == 1 && x >= 0 && x < Width && y >= 0 && y < Height)
+				if (x >= 0 && x < Width && y >= 0 && y < Height)
 				{
 					UnityEngine.Debug.Log("X");
-					if (y - 1 >= 0 && gridArray[y - 1, x].inHexArea(CursorToCenter)) UnityEngine.Debug.Log("1=" + x + " " + y); return new Vector3Int(x, --y);
-					if (gridArray[y, x].inHexArea(CursorToCenter)) UnityEngine.Debug.Log("2=" + x + " " + y); return new Vector3Int(x, y);
-					if (x - 1 >= 0 && gridArray[y, x - 1].inHexArea(CursorToCenter)) UnityEngine.Debug.Log("3=" + x + " " + y); return new Vector3Int(--x, y);
-				}
-				else if (x % 2 == 0 && x >= 0 && x < Width)
-				{
-					UnityEngine.Debug.Log("O");
-
-					if (gridArray[y, x].inHexArea(CursorToCenter))										return new Vector3Int(x, y);
-					if (x - 1 >= 0 && gridArray[y, x - 1].inHexArea(CursorToCenter))					return new Vector3Int(--x, y);
-					if (x - 1 >= 0 && y - 1 >= 0 && gridArray[y - 1, x - 1].inHexArea(CursorToCenter))	return new Vector3Int(--x, --y);
+					if (gridArray[y, x].inHexArea(CursorToCenter))
+					{
+						UnityEngine.Debug.Log("1: " + x + " " + y); 
+						return new Vector3Int(x, y);
+					}
+					if (x - 1 >= 0 &&	gridArray[y, x - 1].inHexArea(CursorToCenter)) 
+					{
+						UnityEngine.Debug.Log("2: " + x + " " + y); 
+						return new Vector3Int(--x, y);
+					}
+					if (x - 1 >= 0 && y + 1 < Height &&	gridArray[y + 1, x - 1].inHexArea(CursorToCenter)) 
+					{
+						UnityEngine.Debug.Log("3: " + x + " " + y); 
+						return new Vector3Int(--x, ++y);
+					}
 				}
 			}
 			return Vector3Int.zero;

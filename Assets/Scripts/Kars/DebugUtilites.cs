@@ -29,10 +29,52 @@ namespace Kars.Debug
 
 			return textObj;
 		}
-		public static void RotateSysCoord(float angel_deg, ref float x, ref float y)
+		public static void RotateSysCoord(float new_angel_deg, ref float x, ref float y)
 		{
-			x *= Mathf.Cos(angel_deg / 180 * Mathf.PI);
-			y *= Mathf.Sin(angel_deg / 180 * Mathf.PI);
+			float gip = Mathf.Sqrt(x * x + y * y);
+			float origin_angel_deg = Mathf.Atan2(y, x);
+			x = gip * Mathf.Cos((origin_angel_deg - new_angel_deg) / 180 * Mathf.PI);
+			y = gip * Mathf.Sin((origin_angel_deg - new_angel_deg) / 180 * Mathf.PI);
+		}
+		public static Mesh TriangleMesh(Vector3 worldPosition, float side)
+		{
+			Mesh mesh = new Mesh();
+			mesh.name = "Triangle";
+			Vector3[] vertices = new Vector3[3];
+			Vector3[] normals = new Vector3[3];
+			Vector2[] uv = new Vector2[3];
+			vertices[0] = worldPosition;
+			vertices[1] = worldPosition + new Vector3(Mathf.Cos(Mathf.PI / 3) * side, Mathf.Sin(Mathf.PI / 3) * side);
+			vertices[2] = worldPosition + new Vector3(side, 0);
+			normals[0] = Vector3.back;
+			normals[1] = Vector3.back;
+			normals[2] = Vector3.back;
+			uv[0] = worldPosition;
+			uv[1] = worldPosition + new Vector3(side, Mathf.Sin(Mathf.PI / 3) * side);
+			uv[2] = worldPosition + new Vector3(Mathf.Cos(Mathf.PI / 3) * side, side);
+
+			int[] triangles = new int[3];
+			triangles[0] = 0;
+			triangles[1] = 1;
+			triangles[2] = 2;
+
+			mesh.vertices = vertices;
+			mesh.normals = normals;
+			mesh.uv = uv;
+			mesh.triangles = triangles;
+
+			return mesh;
+		}
+		public static bool inTrianArea(Vector3 pos, float radius)
+		{
+			return inTrianArea(pos.x, pos.y, radius);
+		}
+		public static bool inTrianArea(float x, float y, float radius)
+		{
+			if (y < 0) return false;
+			if (x < radius / 2 && x >= 0) return Mathf.Tan(Mathf.PI / 3) > y / x;
+			if (x >= radius / 2 && x <= radius) return Mathf.Tan(Mathf.PI / 3) > y / (radius - x);
+			return false;
 		}
 	}
 }

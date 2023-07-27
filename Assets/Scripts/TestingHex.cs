@@ -7,6 +7,7 @@ using Kars.Debug;
 public class TestingHex : MonoBehaviour
 {
 	HexGrid hexGrid;
+	Hex hex;
 	public int height, width;
 	public float size;
 	public bool isVertical;
@@ -31,6 +32,7 @@ public class TestingHex : MonoBehaviour
 			Debug.Log("posMouse: " + DebugUtilites.GetMouseWorldPosition(transform.position));
 			Debug.Log("pos: " + hexGrid.GetXY(DebugUtilites.GetMouseWorldPosition(transform.position)));
 			followCursor.UpdateNodeOfMapVisual(hexGrid.GetValue(DebugUtilites.GetMouseWorldPosition(transform.position)), true);
+			//Debug.Log("hex: " + hex.inHexArea(DebugUtilites.GetMouseWorldPosition(transform.position)));
 
 		}
 

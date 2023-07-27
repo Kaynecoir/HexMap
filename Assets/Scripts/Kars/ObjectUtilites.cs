@@ -222,8 +222,9 @@ namespace Kars.Object
 		}
 		public bool inTrianArea(float x, float y)
 		{
-			if (x < radius / 2 && x >= 0) return Mathf.Tan(Mathf.PI / 3) > x / y;
-			if (x >= radius / 2 && x <= radius) return Mathf.Tan(Mathf.PI / 3) > (radius - x) / y;
+			if (y < 0) return false;
+			if (x < radius / 2 && x >= 0) return Mathf.Tan(Mathf.PI / 3) >= y / x;
+			if (x >= radius / 2 && x <= radius) return Mathf.Tan(Mathf.PI / 3) >= y / (radius - x);
 			return false;
 		}
 		public bool inHexArea(Vector3 pos)
@@ -232,7 +233,7 @@ namespace Kars.Object
 		}
 		public bool inHexArea(float x, float y)
 		{
-			float angel_del = 0;
+			float angel_del = isVertical ? 90 : 0;
 
 			for (int i = 0; i < 6; i++)
 			{
@@ -243,12 +244,6 @@ namespace Kars.Object
 			return false;
 		}
 
-		public void DrawHex()
-		{
-			for(int i = 0; i < 6; i++)
-			{
-			}
-		}
 		
 		public Mesh CreateHexMesh()
 		{
@@ -263,7 +258,7 @@ namespace Kars.Object
 				normals[i] = Vector3.back;
 				uv[i] = corner[i] / radius / 2 + new Vector3(0.5f, 0.5f);
 			}
-			vertices[6] = new Vector3(0, 0);
+			vertices[6] = worldPosition;
 			normals[6] = Vector3.back;
 			uv[6] = new Vector2(0.5f, 0.5f);
 
