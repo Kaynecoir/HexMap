@@ -11,6 +11,7 @@ namespace Kars.Debug
 		public static Vector3 GetMouseWorldPosition(Vector3 nullCoordinate, Vector3 screenPosition, Camera worldCamera)
 		{
 			Vector3 worldPosition = worldCamera.ScreenToWorldPoint(screenPosition) - nullCoordinate;
+			worldPosition = new Vector3(worldPosition.x, worldPosition.y);
 			return worldPosition;
 		}
 		public static TextMesh CreateWorldText(string text, Transform parent, Vector3 localPosition, int fontSize, Color color, TextAnchor textAnchor, TextAlignment textAlignment, int soringOrder)
