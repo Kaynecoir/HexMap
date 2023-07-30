@@ -7,7 +7,7 @@ namespace Kars
 {
 	namespace Object
 	{
-		class Hex
+		public class Hex
 		{
 			public HexGrid hexGrid;
 			private int gridHeight, gridWidth;
@@ -29,7 +29,7 @@ namespace Kars
 				this.isVertical = isVertical;
 				corner = new Vector3[6];
 
-				//SetCorner();
+				SetCorner();
 			}
 			public Hex(float radius, Vector3 worldPosition, bool isVertical = false)
 			{
@@ -42,6 +42,9 @@ namespace Kars
 				SetCorner();
 			}
 
+			/// <summary>
+			/// Set position of corner points foundation on hexagon positiob=n
+			/// </summary>
 			public void SetCorner()
 			{
 				for (int i = 0; i < 6; i++)
@@ -51,6 +54,10 @@ namespace Kars
 					corner[i] = new Vector3(Mathf.Cos(angel_rad), Mathf.Sin(angel_rad)) * radius + worldPosition;
 				}
 			}
+			public bool inTrianArea(Vector3 mouseWorldPosition)
+			{
+				return inTrianArea(mouseWorldPosition.x, mouseWorldPosition.y);
+			}
 			public bool inTrianArea(float x, float y)
 			{
 				if (y < 0) return false;
@@ -58,19 +65,24 @@ namespace Kars
 				if (x >= radius / 2 && x <= radius) return Mathf.Tan(Mathf.PI / 3) >= y / (radius - x);
 				return false;
 			}
-			public bool inHexArea(Vector3 pos)
+			public bool inHexArea(Vector3 mouseWorldPosition, Vector3 ZeroCoordinate = default(Vector3))
 			{
-				return inHexArea(pos.x, pos.y);
+				return inHexArea(mouseWorldPosition.x, mouseWorldPosition.y, ZeroCoordinate);
 			}
-			public bool inHexArea(float x, float y)
+
+			public bool inHexArea(float x, float y, Vector3 zeroCoordinate = default(Vector3))
 			{
+				x -= zeroCoordinate.x;
+				y -= zeroCoordinate.y;
+				if (x * x + y * y > radius * radius) return false;
+				if (x * x + y * y < littleRadius * littleRadius) return true;
 				float angel_del = isVertical ? 90 : 0;
 
 				for (int i = 0; i < 6; i++)
 				{
 					DebugUtilites.RotateSysCoord(angel_del, ref x, ref y);
 					if (inTrianArea(x, y)) return true;
-					angel_del += 60;
+					angel_del = 60;
 				}
 				return false;
 			}

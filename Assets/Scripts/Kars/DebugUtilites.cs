@@ -32,10 +32,12 @@ namespace Kars.Debug
 		}
 		public static void RotateSysCoord(float new_angel_deg, ref float x, ref float y)
 		{
-			float gip = Mathf.Sqrt(x * x + y * y);
-			float origin_angel_deg = Mathf.Atan2(y, x);
-			x = gip * Mathf.Cos((origin_angel_deg - new_angel_deg) / 180 * Mathf.PI);
-			y = gip * Mathf.Sin((origin_angel_deg - new_angel_deg) / 180 * Mathf.PI);
+			float new_angel_rad = new_angel_deg / 180 * Mathf.PI;
+			float tx = x, ty = y;
+
+			x = tx * Mathf.Cos(new_angel_rad) + ty * Mathf.Sin(new_angel_rad);
+			y = ty * Mathf.Cos(new_angel_rad) - tx * Mathf.Sin(new_angel_rad);
+
 		}
 		public static Mesh TriangleMesh(Vector3 worldPosition, float side)
 		{

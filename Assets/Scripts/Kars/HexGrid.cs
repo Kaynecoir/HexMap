@@ -6,7 +6,7 @@ using Kars.Debug;
 
 namespace Kars.Object
 {
-    class HexGrid
+    public class HexGrid
     {
 		public int Height { get; protected set; }
 		public int Width { get; protected set; }
