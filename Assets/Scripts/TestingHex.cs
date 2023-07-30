@@ -31,11 +31,13 @@ public class TestingHex : MonoBehaviour
 		{		
 			Debug.Log("posMouse: " + DebugUtilites.GetMouseWorldPosition(transform.position));
 			Debug.Log("pos: " + hexGrid.GetXY(DebugUtilites.GetMouseWorldPosition(transform.position)));
-			followCursor.UpdateNodeOfMapVisual(hexGrid.GetValue(DebugUtilites.GetMouseWorldPosition(transform.position)), true);
+			
 			//Debug.Log("hex: " + hex.inHexArea(DebugUtilites.GetMouseWorldPosition(transform.position)));
 
 		}
-
+		Hex h = hexGrid.GetValue(DebugUtilites.GetMouseWorldPosition(transform.position));
+		//hexGrid.ClearHexMeshArray();
+		followCursor.UpdateNodeOfMapVisual(h, h.inHexArea(DebugUtilites.GetMouseWorldPosition(transform.position)));
 
 	}
 
@@ -66,7 +68,7 @@ public class TestingHex : MonoBehaviour
 			int index = y * hexGrid.Width + x;
 			Vector2 uvStep = new Vector2(0, 0);
 
-			hexGrid.AddHexMeshToArray(hex, vertices, normals, uv, triangles, index, isWhite ? new Vector2(0.5f, 0) : new Vector2(0, 0));
+			hexGrid.AddHexMeshToArray(hex, vertices, normals, uv, triangles, index, isWhite ? new Vector2(0.999f, 0) : new Vector2(0, 0));
 
 			Mesh mesh = hexGrid.gridMesh;
 			mesh.name = "GridMesh";

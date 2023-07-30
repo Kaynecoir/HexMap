@@ -9,13 +9,15 @@ namespace Kars
 	{
 		public class Hex
 		{
+			// Fields for work with HexGrid
 			public HexGrid hexGrid;
+			public int positionX { get; private set; }
+			public int positionY { get; private set; }
+
 			private int gridHeight, gridWidth;
 			public Vector3 worldPosition;
 			public Vector3[] corner { get; private set; }
 			public List<Hex> neigbourHex;
-			public int positionX { get; private set; }
-			public int positionY { get; private set; }
 			public float radius { get; private set; }
 			public float littleRadius { get; protected set; }
 			public float height { get; private set; }   // for 3D
@@ -53,6 +55,11 @@ namespace Kars
 					float angel_rad = angel_del / 180 * Mathf.PI;
 					corner[i] = new Vector3(Mathf.Cos(angel_rad), Mathf.Sin(angel_rad)) * radius + worldPosition;
 				}
+			}
+			public void SetGrid(int x, int y, HexGrid hexGrid)
+			{
+				this.positionX = x; this.positionY = y;
+				this.hexGrid = hexGrid;
 			}
 			public bool inTrianArea(Vector3 mouseWorldPosition)
 			{
