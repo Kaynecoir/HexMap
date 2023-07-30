@@ -6,23 +6,23 @@ using Kars.Debug;
 
 public class TestingHex : MonoBehaviour
 {
-	HexGrid hexGrid;
-	Hex hex;
+	HexGrid<int> hexGrid;
 	public int height, width;
-	public float size;
+	public float radius;
 	public bool isVertical;
-	FollowCursorHexMap followCursor;
+	FollowCursorHexMap<int> followCursor;
 	private void Start()
 	{
-		Vector3 pos = new Vector3(size * (isVertical ? Mathf.Sin(Mathf.PI / 3): 1), size * (!isVertical ? Mathf.Sin(Mathf.PI / 3) : 1));
-		hexGrid = new HexGrid(height, width, size, transform.position, (HexGrid grid, int height, int width) => 
+		Vector3 pos = new Vector3(radius * (isVertical ? Mathf.Sin(Mathf.PI / 3): 1), radius * (!isVertical ? Mathf.Sin(Mathf.PI / 3) : 1));
+		hexGrid = new HexGrid<int>(height, width, radius, transform.position, (int val) => 
 		{
-			Hex h = new Hex(grid.Radius);
+			Hexagon<int> h = new Hexagon<int>(radius);
+			h.SetValue(val);
 			return h; 
 		}, pos, isVertical);
 		MeshFilter meshFilter = GetComponent<MeshFilter>();
 		meshFilter.mesh = hexGrid.CreateMeshArray();
-		followCursor = new FollowCursorHexMap(hexGrid, meshFilter);
+		followCursor = new FollowCursorHexMap<int>(hexGrid, meshFilter);
 	}
 
 	private void Update()
@@ -34,16 +34,16 @@ public class TestingHex : MonoBehaviour
 			
 			//Debug.Log("hex: " + hex.inHexArea(DebugUtilites.GetMouseWorldPosition(transform.position)));
 
+			Hexagon<int> h = hexGrid.GetValue(DebugUtilites.GetMouseWorldPosition(transform.position));
+			//hexGrid.ClearHexMeshArray();
+			followCursor.UpdateNodeOfMapVisual(h, true);
 		}
-		Hex h = hexGrid.GetValue(DebugUtilites.GetMouseWorldPosition(transform.position));
-		//hexGrid.ClearHexMeshArray();
-		followCursor.UpdateNodeOfMapVisual(h, h.inHexArea(DebugUtilites.GetMouseWorldPosition(transform.position)));
 
 	}
 
-	class FollowCursorHexMap
+	class FollowCursorHexMap<HexObject>
 	{
-		HexGrid hexGrid;
+		HexGrid<HexObject> hexGrid;
 		public MeshFilter meshFilter;
 		public Transform transform;
 		Vector3[] vertices;
@@ -51,7 +51,7 @@ public class TestingHex : MonoBehaviour
 		Vector2[] uv;
 		int[] triangles;
 
-		public FollowCursorHexMap(HexGrid hexGrid, MeshFilter meshFilter)
+		public FollowCursorHexMap(HexGrid<HexObject> hexGrid, MeshFilter meshFilter)
 		{
 			this.hexGrid = hexGrid;
 			vertices = hexGrid.gridMesh.vertices;
@@ -60,7 +60,7 @@ public class TestingHex : MonoBehaviour
 			triangles = hexGrid.gridMesh.triangles;
 			this.meshFilter = meshFilter;
 		}
-		public void UpdateNodeOfMapVisual(Hex hex, bool isWhite)
+		public void UpdateNodeOfMapVisual(Hexagon<HexObject> hex, bool isWhite)
 		{
 			Vector3 baseSize = new Vector3(1, 1) * hexGrid.Size;
 
@@ -68,7 +68,11 @@ public class TestingHex : MonoBehaviour
 			int index = y * hexGrid.Width + x;
 			Vector2 uvStep = new Vector2(0, 0);
 
-			hexGrid.AddHexMeshToArray(hex, vertices, normals, uv, triangles, index, isWhite ? new Vector2(0.999f, 0) : new Vector2(0, 0));
+			hexGrid.AddHexMeshToArray(hex, vertices, normals, uv, triangles, index, isWhite ? new Vector2(0.99f, 0) : new Vector2(0, 0));
+			foreach(Hexagon<HexObject> h in hex.neigbourHex)
+			{
+				hexGrid.AddHexMeshToArray(h, vertices, normals, uv, triangles, h.positionY * hexGrid.Width + h.positionX, new Vector2(0.99f, 0.0f));
+			}
 
 			Mesh mesh = hexGrid.gridMesh;
 			mesh.name = "GridMesh";
