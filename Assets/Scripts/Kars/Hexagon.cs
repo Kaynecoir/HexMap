@@ -33,6 +33,7 @@ namespace Kars
 				this.worldPosition = worldPosition;
 				this.isVertical = isVertical;
 				this.neigbourHex = new List<Hexagon<T>>();
+				this.corner = new Vector3[6];
 				//if(this.isVertical)
 				//{
 				//	neigbourHex = new Dictionary<string, Hexagon<HexObject>>()
@@ -60,8 +61,6 @@ namespace Kars
 				//	};
 				//}
 
-				corner = new Vector3[6];
-
 				SetCorner();
 			}
 			public Hexagon(float radius, Vector3 worldPosition, Func<Hexagon<T>, T> valueFunc, bool isVertical = false)
@@ -72,7 +71,6 @@ namespace Kars
 				this.isVertical = isVertical;
 				this.neigbourHex = new List<Hexagon<T>>();
 				this.Value = valueFunc(this);
-				this.Value.position = this.worldPosition;
 				this.corner = new Vector3[6];
 				
 				//if(this.isVertical)

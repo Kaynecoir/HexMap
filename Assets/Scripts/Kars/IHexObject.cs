@@ -8,7 +8,7 @@ namespace Kars
 	{
 		public interface IHexObject
 		{
-			public Vector3 position { get; set; }
+			public Hexagon<IHexObject> hexParant { get; set; }
 		}
 	}
 }

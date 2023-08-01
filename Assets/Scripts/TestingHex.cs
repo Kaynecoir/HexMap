@@ -43,7 +43,7 @@ public class TestingHex : MonoBehaviour
 
 	}
 
-	class FollowCursorHexMap<HexObject>
+	class FollowCursorHexMap<HexObject> where HexObject : IHexObject
 	{
 		HexGrid<HexObject> hexGrid;
 		public MeshFilter meshFilter;

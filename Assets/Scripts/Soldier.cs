@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Kars.Object;
 
-public class Soldier : MonoBehaviour
+public class Soldier : MonoBehaviour, IHexObject
 {
 	public int positionX, positionY;
 	public float size = 1.0f;
 	private GameObject square;
+
+	public Hexagon<IHexObject> hexParant { get; set; }
 
 	private void Start()
 	{
