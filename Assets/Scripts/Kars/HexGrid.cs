@@ -6,7 +6,7 @@ using Kars.Debug;
 
 namespace Kars.Object
 {
-    public class HexGrid<HexObject>
+    public class HexGrid<T> where T : IHexObject
     {
 		public int Height { get; protected set; }
 		public int Width { get; protected set; }
@@ -17,11 +17,11 @@ namespace Kars.Object
 		public Vector3 PositionToCenter { get; protected set; }
 		public Mesh gridMesh;
 		protected TextMesh[,] textArray;
-		public Hexagon<HexObject>[,] gridArray { get; protected set; }
+		public Hexagon<T>[,] gridArray { get; protected set; }
 
 		public delegate void VoidFunc();
 		public event VoidFunc ChangeValue;
-		public HexGrid(int height, int width, float radius, Vector3 worldPosition, Func<HexObject, Hexagon<HexObject>> createGridObject, Vector3 positionToCenter, bool isVertical = false, bool isDebuging = false)
+		public HexGrid(int height, int width, float radius, Vector3 worldPosition, Vector3 positionToCenter, bool isVertical = false, bool isDebuging = false)
 		{
 			Height = height;
 			Width = width;
@@ -29,13 +29,13 @@ namespace Kars.Object
 			littleRadius = radius * Mathf.Sin(Mathf.PI / 3);
 			PositionToCenter = positionToCenter;
 			this.isVertical = isVertical;
-			gridArray = new Hexagon<HexObject>[Height, Width];
+			gridArray = new Hexagon<T>[Height, Width];
 			for (int y = 0; y < height; y++)
 			{
 				for (int x = 0; x < width; x++)
 				{
 
-					Hexagon<HexObject> h = new Hexagon<HexObject>(Radius, GetPositionFromCenter(x, y), isVertical: this.isVertical);
+					Hexagon<T> h = new Hexagon<T>(Radius, GetPositionFromCenter(x, y), isVertical: this.isVertical);
 					h.SetCorner();
 					h.SetGrid(x, y, this);
 					if (x - 1 >= 0) h.AddNeigbourHex(gridArray[y, x - 1]);
@@ -55,7 +55,42 @@ namespace Kars.Object
 				}
 			}
 		}
-		public Hexagon<HexObject> this[int y, int x]
+		public HexGrid(int height, int width, float radius, Vector3 worldPosition, Func<Hexagon<T>, T> createHexObject, Vector3 positionToCenter, bool isVertical = false, bool isDebuging = false)
+		{
+			Height = height;
+			Width = width;
+			Radius = radius;
+			littleRadius = radius * Mathf.Sin(Mathf.PI / 3);
+			PositionToCenter = positionToCenter;
+			this.isVertical = isVertical;
+			gridArray = new Hexagon<T>[Height, Width];
+			for (int y = 0; y < height; y++)
+			{
+				for (int x = 0; x < width; x++)
+				{
+
+					Hexagon<T> h = new Hexagon<T>(Radius, GetPositionFromCenter(x, y), createHexObject, this.isVertical);
+
+					h.SetCorner();
+					h.SetGrid(x, y, this);
+					if (x - 1 >= 0) h.AddNeigbourHex(gridArray[y, x - 1]);
+					if (y - 1 >= 0) h.AddNeigbourHex(gridArray[y - 1, x]);
+					if (isVertical)
+					{
+						if (y % 2 == 0 && x - 1 >= 0 && y - 1 >= 0) h.AddNeigbourHex(gridArray[y - 1, x - 1]);
+						else if (y % 2 == 1 && x + 1 < Width) h.AddNeigbourHex(gridArray[y - 1, x + 1]);
+					}
+					else
+					{
+						if (x % 2 == 0 && x - 1 >= 0 && y - 1 >= 0) h.AddNeigbourHex(gridArray[y - 1, x - 1]);
+						if (x % 2 == 0 && x + 1 < Width && y - 1 >= 0) h.AddNeigbourHex(gridArray[y - 1, x + 1]);
+					}
+					gridArray[y, x] = h;
+
+				}
+			}
+		}
+		public Hexagon<T> this[int y, int x]
 		{
 			get
 			{
@@ -210,13 +245,13 @@ namespace Kars.Object
 			x = 0;	y = 0;
 			return new Vector3Int(x, y);
 		}
-		public void SetValue(Vector3 worldPosition, Hexagon<HexObject> hex)
+		public void SetValue(Vector3 worldPosition, Hexagon<T> hex)
 		{
 			int x, y;
 			GetXY(worldPosition, out x, out y);
 			SetValue(x, y, hex);
 		}
-		public void SetValue(int x, int y, Hexagon<HexObject> hex)
+		public void SetValue(int x, int y, Hexagon<T> hex)
 		{
 			if (x >= 0 && x < Width && y >= 0 && y < Height)
 			{
@@ -225,18 +260,18 @@ namespace Kars.Object
 				ChangeValue?.Invoke();
 			}
 		}
-		public Hexagon<HexObject> GetValue(Vector3 worldPosition)
+		public Hexagon<T> GetValue(Vector3 worldPosition)
 		{
 			GetXY(worldPosition, out int x, out int y);
 			return GetValue(x, y);
 		}
-		public Hexagon<HexObject> GetValue(int x, int y)
+		public Hexagon<T> GetValue(int x, int y)
 		{
 			if (x >= 0 && x < Width && y >= 0 && y < Height)
 			{
 				return gridArray[y, x];
 			}
-			else return default(Hexagon<HexObject>);
+			else return default(Hexagon<T>);
 		}
 		public Mesh CreateMeshArray()
 		{
@@ -287,7 +322,7 @@ namespace Kars.Object
 			return gridMesh;
 		}
 
-		public void AddHexMeshToArray(Hexagon<HexObject> hex, Vector3[] vertices, Vector3[] normals, Vector2[] uv, int[] triangles, int index)
+		public void AddHexMeshToArray(Hexagon<T> hex, Vector3[] vertices, Vector3[] normals, Vector2[] uv, int[] triangles, int index)
 		{
 			for (int i = 0; i < 6; i++)
 			{
@@ -307,7 +342,7 @@ namespace Kars.Object
 				triangles[index * 18 + i * 3 + 2] = (index * 7 + i);
 			}
 		}
-		public void AddHexMeshToArray(Hexagon<HexObject> hex, Vector3[] vertices, Vector3[] normals, Vector2[] uv, int[] triangles, int index, Vector2 uvPoint)
+		public void AddHexMeshToArray(Hexagon<T> hex, Vector3[] vertices, Vector3[] normals, Vector2[] uv, int[] triangles, int index, Vector2 uvPoint)
 		{
 			for (int i = 0; i < 6; i++)
 			{

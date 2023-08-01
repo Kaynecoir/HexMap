@@ -6,23 +6,25 @@ using Kars.Debug;
 
 public class TestingHex : MonoBehaviour
 {
-	HexGrid<int> hexGrid;
+	HexGrid<Soldier> hexGrid;
 	public int height, width;
 	public float radius;
 	public bool isVertical;
-	FollowCursorHexMap<int> followCursor;
+	public GameObject soldierObject;
+	FollowCursorHexMap<Soldier> followCursor;
 	private void Start()
 	{
 		Vector3 pos = new Vector3(radius * (isVertical ? Mathf.Sin(Mathf.PI / 3): 1), radius * (!isVertical ? Mathf.Sin(Mathf.PI / 3) : 1));
-		hexGrid = new HexGrid<int>(height, width, radius, transform.position, (int val) => 
+		hexGrid = new HexGrid<Soldier>(height, width, radius, transform.position, (Hexagon<Soldier> hex) => 
 		{
-			Hexagon<int> h = new Hexagon<int>(radius);
-			h.SetValue(val);
-			return h; 
+			Soldier s = new Soldier();
+			GameObject go = Instantiate(soldierObject, Vector3.zero, Quaternion.identity);
+			s = go.GetComponent<Soldier>();
+			return s;
 		}, pos, isVertical);
 		MeshFilter meshFilter = GetComponent<MeshFilter>();
 		meshFilter.mesh = hexGrid.CreateMeshArray();
-		followCursor = new FollowCursorHexMap<int>(hexGrid, meshFilter);
+		followCursor = new FollowCursorHexMap<Soldier>(hexGrid, meshFilter);
 	}
 
 	private void Update()
@@ -34,7 +36,7 @@ public class TestingHex : MonoBehaviour
 			
 			//Debug.Log("hex: " + hex.inHexArea(DebugUtilites.GetMouseWorldPosition(transform.position)));
 
-			Hexagon<int> h = hexGrid.GetValue(DebugUtilites.GetMouseWorldPosition(transform.position));
+			Hexagon<Soldier> h = hexGrid.GetValue(DebugUtilites.GetMouseWorldPosition(transform.position));
 			//hexGrid.ClearHexMeshArray();
 			followCursor.UpdateNodeOfMapVisual(h, true);
 		}

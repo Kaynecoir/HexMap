@@ -252,10 +252,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 993f421e72171ce4dbe53f6e6fcf2f25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  height: 60
-  width: 92
-  radius: 1
-  isVertical: 1
+  height: 26
+  width: 53
+  radius: 2
+  isVertical: 0
 --- !u!23 &522469671
 MeshRenderer:
   m_ObjectHideFlags: 0

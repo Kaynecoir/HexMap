@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,15 +8,15 @@ namespace Kars
 {
 	namespace Object
 	{
-		public class Hexagon<HexObject>
+		public class Hexagon<T> where T : IHexObject
 		{
 			// Fields for work with HexGrid
-			public HexGrid<HexObject> hexGrid;
+			public HexGrid<T> hexGrid;
 			public int positionX { get; private set; }
 			public int positionY { get; private set; }
 			//public Dictionary<string, Hexagon< HexObject>> neigbourHex;
-			public List<Hexagon<HexObject>> neigbourHex { get; private set; }
-			public HexObject Value { get; private set; }
+			public List<Hexagon<T>> neigbourHex { get; private set; }
+			public T Value { get; private set; }
 
 
 			public Vector3 worldPosition { get; private set; }
@@ -25,13 +26,13 @@ namespace Kars
 			public float height { get; private set; }   // for 3D
 			public bool isVertical { get; private set; }
 
-			public Hexagon(float radius, Vector3 worldPosition = default(Vector3), HexObject value = default(HexObject), bool isVertical = false)
+			public Hexagon(float radius, Vector3 worldPosition = default(Vector3), T value = default(T), bool isVertical = false)
 			{
 				this.radius = radius;
 				this.littleRadius = radius * Mathf.Sin(Mathf.PI / 3);
 				this.worldPosition = worldPosition;
 				this.isVertical = isVertical;
-				this.neigbourHex = new List<Hexagon<HexObject>>();
+				this.neigbourHex = new List<Hexagon<T>>();
 				//if(this.isVertical)
 				//{
 				//	neigbourHex = new Dictionary<string, Hexagon<HexObject>>()
@@ -63,6 +64,48 @@ namespace Kars
 
 				SetCorner();
 			}
+			public Hexagon(float radius, Vector3 worldPosition, Func<Hexagon<T>, T> valueFunc, bool isVertical = false)
+			{
+				this.radius = radius;
+				this.littleRadius = radius * Mathf.Sin(Mathf.PI / 3);
+				this.worldPosition = worldPosition;
+				this.isVertical = isVertical;
+				this.neigbourHex = new List<Hexagon<T>>();
+				this.Value = valueFunc(this);
+				this.Value.position = this.worldPosition;
+				this.corner = new Vector3[6];
+				
+				//if(this.isVertical)
+				//{
+				//	neigbourHex = new Dictionary<string, Hexagon<HexObject>>()
+				//	{
+				//		{"left-top"	  , null },
+				//		{"left-middle", null },
+				//		{"left-bottom", null },
+
+				//		{"right-top"   , null },
+				//		{"right-middle", null },
+				//		{"right-bottom", null },
+				//	};
+				//}
+				//else
+				//{
+				//	neigbourHex = new Dictionary<string, Hexagon<HexObject>>()
+				//	{
+				//		{"left-up"  , null },
+				//		{"center-up", null },
+				//		{"right-up" , null },
+
+				//		{"left-down"  , null },
+				//		{"center-down", null },
+				//		{"right-down" , null },
+				//	};
+				//}
+
+				
+
+				SetCorner();
+			}
 
 			/// <summary>
 			/// Set position of corner points foundation on hexagon positiob=n
@@ -76,16 +119,20 @@ namespace Kars
 					corner[i] = new Vector3(Mathf.Cos(angel_rad), Mathf.Sin(angel_rad)) * radius + worldPosition;
 				}
 			}
-			public void SetGrid(int x, int y, HexGrid<HexObject> hexGrid)
+			public void SetGrid(int x, int y, HexGrid<T> hexGrid)
 			{
 				this.positionX = x; this.positionY = y;
 				this.hexGrid = hexGrid;
 			}
-			public void SetValue(HexObject val)
+			public void SetValue(T val)
 			{
 				Value = val;
 			}
-			public void AddNeigbourHex(Hexagon<HexObject> hex)
+			public Vector3 GetPosition()
+			{
+				return worldPosition;
+			}
+			public void AddNeigbourHex(Hexagon<T> hex)
 			{
 				this.neigbourHex.Add(hex);
 				hex.neigbourHex.Add(this);
@@ -105,7 +152,6 @@ namespace Kars
 			{
 				return inHexArea(mouseWorldPosition.x, mouseWorldPosition.y, ZeroCoordinate);
 			}
-
 			public bool inHexArea(float x, float y, Vector3 zeroCoordinate = default(Vector3))
 			{
 				x -= zeroCoordinate.x;
