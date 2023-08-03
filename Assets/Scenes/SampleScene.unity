@@ -252,9 +252,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 993f421e72171ce4dbe53f6e6fcf2f25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  height: 10
-  width: 10
-  radius: 10
+  height: 12
+  width: 18
+  radius: 5
   isVertical: 1
   soldierObject: {fileID: 8053595550879156644, guid: c09eafdfd6d352644a890a7881ed2220, type: 3}
 --- !u!23 &522469671

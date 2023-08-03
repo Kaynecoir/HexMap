@@ -219,18 +219,17 @@ namespace Kars.Object
 			x = 0;	y = 0;
 			return new Vector3Int(x, y);
 		}
-		public void SetValue(Vector3 worldPosition, Hexagon<T> hex)
+		public void SetValue(Vector3 worldPosition, T val)
 		{
 			int x, y;
 			GetXY(worldPosition, out x, out y);
-			SetValue(x, y, hex);
+			SetValue(x, y, val);
 		}
-		public void SetValue(int x, int y, Hexagon<T> hex)
+		public void SetValue(int x, int y, T val)
 		{
 			if (x >= 0 && x < Width && y >= 0 && y < Height)
 			{
-				gridArray[y, x] = hex;
-				//textMeshArray[pos.y, pos.x].text = gridArray[pos.y, pos.x].ToString();
+				gridArray[y, x].SetValue(val);
 				ChangeValue?.Invoke();
 			}
 		}
@@ -259,6 +258,30 @@ namespace Kars.Object
 			for(int y = 0; y < Height; y++)
 			{
 				for(int x = 0; x < Width; x++)
+				{
+					int index = y * Width + x;
+					AddHexMeshToArray(GetValue(x, y), vertices, normals, uv, triangles, index);
+				}
+			}
+			gridMesh.vertices = vertices;
+			gridMesh.normals = normals;
+			gridMesh.uv = uv;
+			gridMesh.triangles = triangles;
+
+			return gridMesh;
+		}
+		public Mesh CreateMeshArray(out Vector3[] vertices, out Vector3[] normals, out Vector2[] uv, out int[] triangles)
+		{
+			gridMesh = new Mesh();
+			gridMesh.name = "HexGrid";
+			vertices = new Vector3[(Width * Height) * 7];
+			normals = new Vector3[(Width * Height) * 7];
+			uv = new Vector2[(Width * Height) * 7];
+			triangles = new int[(Width * Height) * 18];
+
+			for (int y = 0; y < Height; y++)
+			{
+				for (int x = 0; x < Width; x++)
 				{
 					int index = y * Width + x;
 					AddHexMeshToArray(GetValue(x, y), vertices, normals, uv, triangles, index);

@@ -66,10 +66,6 @@ namespace Kars.Object
 		}
 		public void SetStartNode(int x, int y)
 		{
-			UnityEngine.Debug.Log(x + " " + y);
-			UnityEngine.Debug.Log(hexGrid[y, x]);
-			UnityEngine.Debug.Log(hexGrid[y, x].Value);
-
 			startNode = hexGrid[y, x].Value;
 		}
 		public List<HexPathNode> FindPath(int endX, int endY)
@@ -174,17 +170,17 @@ namespace Kars.Object
 			if(hexGrid.isVertical)
 			{
 				distanceX = Mathf.Abs(a.HexParant.worldPosition.x - b.HexParant.worldPosition.x) / hexGrid.littleRadius;
-				distanceY = Mathf.Abs(a.HexParant.worldPosition.y - b.HexParant.worldPosition.y) * 2 / 3 / hexGrid.Radius;
-				minim = Mathf.Min(distanceX * Mathf.Sqrt(3), distanceY);
-				distance = Mathf.RoundToInt(distanceX + 2 / Mathf.Sqrt(3) * (distanceY - minim));
+				distanceY = Mathf.Abs(a.HexParant.worldPosition.y - b.HexParant.worldPosition.y) * 2 / Mathf.Sqrt(3) / hexGrid.littleRadius;
+				minim = Mathf.Min(distanceX, distanceY / Mathf.Sqrt(3));
+				distance = Mathf.RoundToInt(distanceX + 2 / Mathf.Sqrt(3) * distanceY - minim);
 			}
 			else
 			{
 				UnityEngine.Debug.Log(a.HexParant.worldPosition + " " + hexGrid);
 				distanceY = Mathf.Abs(a.HexParant.worldPosition.y - b.HexParant.worldPosition.y) / hexGrid.littleRadius;
-				distanceX = Mathf.Abs(a.HexParant.worldPosition.x - b.HexParant.worldPosition.x) * 2 / 3 / hexGrid.Radius;
-				minim = Mathf.Min(distanceY * Mathf.Sqrt(3), distanceX);
-				distance = Mathf.RoundToInt(distanceY + 2 / Mathf.Sqrt(3) * (distanceX - minim));
+				distanceX = Mathf.Abs(a.HexParant.worldPosition.x - b.HexParant.worldPosition.x) * 2 / Mathf.Sqrt(3) / hexGrid.littleRadius;
+				minim = Mathf.Min(distanceY, distanceX / Mathf.Sqrt(3));
+				distance = Mathf.RoundToInt(distanceY + 2 / Mathf.Sqrt(3) * distanceX - minim);
 			}
 
 			return distance * MOVE_STRAIGHT_COST;
@@ -208,7 +204,6 @@ namespace Kars.Object
 		private HexGrid<HexPathNode> grid;
 		MeshFilter meshFilter;
 		Transform transform;
-		Mesh mesh;
 
 		Vector3[] vertices;
 		Vector3[] normals;
@@ -221,7 +216,6 @@ namespace Kars.Object
 			this.grid.ChangeValue += UpdateFindMapVisual;
 			this.meshFilter = meshFilter;
 			this.transform = transform;
-			this.mesh = pathfinding.GetGrid().gridMesh;
 			pathfinding.AddToOpenList += (HexPathNode node) => { UpdateNodeOfMapVisual(node, 0.2f);/*UnityEngine.Debug.Log(node);*/ };
 			pathfinding.AddToClosedList += (HexPathNode node) => { UpdateNodeOfMapVisual(node, 0.6f); };
 			pathfinding.FindWay += (HexPathNode node) =>
@@ -235,7 +229,8 @@ namespace Kars.Object
 			};
 			pathfinding.ChangeWalking += (HexPathNode node) => { UpdateNodeOfMapVisual(node, 0.1f); };
 
-			KarsMesh.CreateEmptyMeshArray(grid.Height * grid.Width, out vertices, out normals, out uv, out triangles);
+			grid.CreateMeshArray(out vertices, out normals, out uv, out triangles);
+
 
 			UpdateFindMapVisual();
 		}
@@ -251,30 +246,34 @@ namespace Kars.Object
 				for (int x = 0; x < grid.Width; x++)
 				{
 					int index = y * grid.Width + x;
-
-					for (int i = 0; i < 6; i++)
-					{
-						uv[index * 7 + i] = grid.GetValue(x, y).Value.IsWalking ? new Vector2(0.8f, 0.0f) : new Vector2(0.0f, 0.0f);
-					}
-					uv[index * 7 + 6] = grid.GetValue(x, y).Value.IsWalking ? new Vector2(0.8f, 0.0f) : new Vector2(0.0f, 0.0f);
-
-					//KarsMesh.AddToMeshArray(vertices, normals, uv, triangles, index, -transform.position + grid.GetPositionFromCenter(x, y) + baseSize * 0.5f, 0f, baseSize, Vector3.zero, grid.GetValue(x, y).IsWalking ? new Vector2(0.8f, 0.0f) : new Vector2(0.0f, 0.0f));
+					grid.AddHexMeshToArray(grid[y, x], vertices, normals, uv, triangles, index, (!grid[y, x].Value.IsWalking ? new Vector2(0.8f, 0.0f) : new Vector3(0.1f, 0.0f)));
 				}
 			}
+			Mesh mesh = new Mesh();
+			mesh.name = "GridMesh";
+			mesh.vertices = vertices;
+			mesh.normals = normals;
+			mesh.uv = uv;
+			mesh.triangles = triangles;
+
+			meshFilter.mesh = mesh;
 		}
 
 		public void UpdateNodeOfMapVisual(HexPathNode node, float step)
 		{
+
 			int x = node.X, y = node.Y;
 			int index = y * grid.Width + x;
+			grid.AddHexMeshToArray(grid[y, x], vertices, normals, uv, triangles, index, new Vector2(step, 0.0f));
 
-			for (int i = 0; i < 6; i++)
-			{
-				uv[index * 7 + i] = grid.GetValue(x, y).Value.IsWalking ? new Vector2(0.8f, 0.0f) : new Vector2(0.0f, 0.0f);
-			}
-			uv[index * 7 + 6] = grid.GetValue(x, y).Value.IsWalking ? new Vector2(0.8f, 0.0f) : new Vector2(0.0f, 0.0f);
+			Mesh mesh = new Mesh();
+			mesh.name = "GridMesh";
+			mesh.vertices = vertices;
+			mesh.normals = normals;
+			mesh.uv = uv;
+			mesh.triangles = triangles;
 
-			//KarsMesh.AddToMeshArray(vertices, normals, uv, triangles, index, -transform.position + grid.GetWorldPosition(x, y) + baseSize * 0.5f, 0f, baseSize, Vector3.zero, new Vector2(step, 0.0f));
+			meshFilter.mesh = mesh;
 		}
 	}
 }
