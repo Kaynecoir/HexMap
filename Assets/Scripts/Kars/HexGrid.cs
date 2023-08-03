@@ -10,7 +10,6 @@ namespace Kars.Object
     {
 		public int Height { get; protected set; }
 		public int Width { get; protected set; }
-		public float Size { get; protected set; }
 		public float Radius { get; protected set; }
 		public float littleRadius { get; protected set; }
 		public bool isVertical { get; private set; }
@@ -55,7 +54,7 @@ namespace Kars.Object
 				}
 			}
 		}
-		public HexGrid(int height, int width, float radius, Vector3 worldPosition, Func<Hexagon<T>, T> createHexObject, Vector3 positionToCenter, bool isVertical = false, bool isDebuging = false)
+		public HexGrid(int height, int width, float radius, Vector3 worldPosition, Vector3 positionToCenter, Func<Hexagon<T>, T> createHexObject, bool isVertical = false, bool isDebuging = false)
 		{
 			Height = height;
 			Width = width;
@@ -101,23 +100,6 @@ namespace Kars.Object
 				gridArray[y, x] = value;
 			}
 		}
-		public void SeeDebug(float duration = 100f)
-		{
-			textArray = new TextMesh[Height, Width];
-
-			for (int y = 0; y < Height; y++)
-			{
-				for (int x = 0; x < Width; x++)
-				{
-					textArray[y, x] = DebugUtilites.CreateWorldText(gridArray[y, x].ToString(), null, GetPositionFromCenter(x, y) + new Vector3(Size, Size) * 0.5f, 40, Color.white, TextAnchor.MiddleCenter, TextAlignment.Center, 0);
-					UnityEngine.Debug.DrawLine(GetPositionFromCenter(x, y), GetPositionFromCenter(x, y + 1), Color.white, duration);
-					UnityEngine.Debug.DrawLine(GetPositionFromCenter(x, y), GetPositionFromCenter(x + 1, y), Color.white, duration);
-
-				}
-				UnityEngine.Debug.DrawLine(GetPositionFromCenter(0, Height), GetPositionFromCenter(Width, Height), Color.white, duration);
-				UnityEngine.Debug.DrawLine(GetPositionFromCenter(Width, 0), GetPositionFromCenter(Width, Height), Color.white, duration);
-			}
-		}
 		public Vector3 GetPositionFromCenter(int x, int y)
 		{
 			Vector3 pos = Vector3.zero;
@@ -152,21 +134,14 @@ namespace Kars.Object
 		{
 			x = 0; y = 0;
 			Vector3 CursorToCenter = CursorPosition - PositionToCenter;
-			UnityEngine.Debug.Log("cursor: " + CursorPosition);
-			UnityEngine.Debug.Log("toCenter: " + PositionToCenter);
-			UnityEngine.Debug.Log("CursorToCenter: " + CursorToCenter);
-
 
 			if (isVertical)
 			{
 				y = Mathf.RoundToInt(CursorPosition.y * 2 / (3 * Radius) - 0.5f);
 				x = Mathf.RoundToInt((CursorPosition.x / littleRadius - (y % 2) - 1.0f) / 2);
 				
-				UnityEngine.Debug.Log(x + " " + y);
-
 				if (x >= 0 && x < Width && y >= 0 && y < Height)
 				{
-					UnityEngine.Debug.Log("O");
 					if (y % 2 == 0)
 					{
 						if (inHexArea(x, y, CursorPosition))
@@ -208,7 +183,6 @@ namespace Kars.Object
 
 				if (x >= 0 && x < Width && y >= 0 && y < Height)
 				{
-					UnityEngine.Debug.Log("X");
 
 					if (x % 2 == 0)
 					{

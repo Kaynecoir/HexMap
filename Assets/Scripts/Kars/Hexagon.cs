@@ -104,7 +104,6 @@ namespace Kars
 
 				SetCorner();
 			}
-
 			/// <summary>
 			/// Set position of corner points foundation on hexagon positiob=n
 			/// </summary>
@@ -166,7 +165,6 @@ namespace Kars
 				}
 				return false;
 			}
-
 
 			public Mesh CreateHexMesh()
 			{

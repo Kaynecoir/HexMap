@@ -9,7 +9,7 @@ public class Soldier : MonoBehaviour, IHexObject
 	public float size = 1.0f;
 	private GameObject square;
 
-	public Hexagon<IHexObject> hexParant { get; set; }
+	public Hexagon<IHexObject> HexParant { get; set; }
 
 	private void Start()
 	{

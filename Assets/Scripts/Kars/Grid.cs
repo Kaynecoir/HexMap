@@ -8,7 +8,7 @@ namespace Kars
 {
 	namespace Object
 	{
-		class Grid<TGridObject>
+		public class Grid<TGridObject>
 		{
 			public int Height { get; protected set; }
 			public int Width { get; protected set; }

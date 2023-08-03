@@ -34,7 +34,7 @@ public class Testing : MonoBehaviour
 			findMap.ClearMap();
 			Vector3 pos = DebugUtilites.GetMouseWorldPosition();
 			pathfinding.GetGrid().GetXY(pos, out int x, out int y);
-			List<PathNode> pathNodes = pathfinding.FindPath(x, y);
+			List<IPathNode> pathNodes = pathfinding.FindPath(x, y);
 
 			pathfinding.SetStartNode(pathNodes[^1]);
 			//grid.SetValue(pos, grid.GetValue(pos) + force );
@@ -43,7 +43,7 @@ public class Testing : MonoBehaviour
 		{
 			Vector3 pos = DebugUtilites.GetMouseWorldPosition();
 			Debug.Log("Wall");
-			pathfinding.GetGrid().GetValue(pos).isWalking = !pathfinding.GetGrid().GetValue(pos).isWalking;
+			pathfinding.GetGrid().GetValue(pos).IsWalking = !pathfinding.GetGrid().GetValue(pos).IsWalking;
 			findMap.UpdateFindMapVisual();
 		}
 	}

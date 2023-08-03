@@ -4,35 +4,37 @@ using UnityEngine;
 
 namespace Kars.Object
 {
-	class PathNode
+	public class PathNode : IPathNode
 	{
-		private Grid<PathNode> grid;
-		public int y, x;
+		public Grid<IPathNode> Grid { get; }
+		public int Y { get; set; }
+		public int X { get; set; }
+		public int GCost { get; set; }
+		public int HCost { get; set; }
+		public int FCost { get; set; }
+		public bool IsWalking { get; set; }
+		IPathNode IPathNode.CameFromNode { get; set; }
+		public Hexagon<IHexObject> HexParant { get; set; }
 
-		public int gCost, hCost, fCost;
-
-		public bool isWalking;
-
-		public PathNode CameFromNode;
 		public PathNode()
 		{
 
 		}
-		public PathNode(Grid<PathNode> grid, int y, int x)
+		public PathNode(Grid<IPathNode> grid, int y, int x)
 		{
-			this.grid = grid;
-			this.y = y;
-			this.x = x;
-			isWalking = true;
+			this.Grid = grid;
+			this.Y = y;
+			this.X = x;
+			IsWalking = true;
 		}
 
 		public void CalculateFCost()
 		{
-			fCost = hCost + gCost;
+			FCost = HCost + GCost;
 		}
 		public override string ToString()
 		{
-			return x + ", " + y + "\nh = " + hCost + " g = " + gCost + " F = " + fCost;
+			return X + ", " + Y + "\nh = " + HCost + " g = " + GCost + " F = " + FCost;
 		}
 	}
 }

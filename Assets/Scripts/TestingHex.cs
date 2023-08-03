@@ -6,41 +6,50 @@ using Kars.Debug;
 
 public class TestingHex : MonoBehaviour
 {
-	HexGrid<Soldier> hexGrid;
+	HexGrid<HexPathNode> hexGrid;
+	PathfindingHex pathfinding;
+	FindHexMapVisual findMap;
+
 	public int height, width;
 	public float radius;
 	public bool isVertical;
 	public GameObject soldierObject;
-	FollowCursorHexMap<Soldier> followCursor;
+	FollowCursorHexMap<HexPathNode> followCursor;
 	private void Start()
 	{
 		Vector3 pos = new Vector3(radius * (isVertical ? Mathf.Sin(Mathf.PI / 3): 1), radius * (!isVertical ? Mathf.Sin(Mathf.PI / 3) : 1));
-		hexGrid = new HexGrid<Soldier>(height, width, radius, transform.position, (Hexagon<Soldier> hex) => 
-		{
-			Soldier s = new Soldier();
-			GameObject go = Instantiate(soldierObject, Vector3.zero, Quaternion.identity);
-			s = go.GetComponent<Soldier>();
-			return s;
-		}, pos, isVertical);
+		pathfinding = new PathfindingHex(height, width, radius, transform.position, isVertical);
+		hexGrid = pathfinding.GetGrid();
+
+
 		MeshFilter meshFilter = GetComponent<MeshFilter>();
+		//findMap = new FindHexMapVisual(pathfinding, meshFilter, transform);
 		meshFilter.mesh = hexGrid.CreateMeshArray();
-		followCursor = new FollowCursorHexMap<Soldier>(hexGrid, meshFilter);
+		//followCursor = new FollowCursorHexMap<HexPathNode>(hexGrid, meshFilter);
 	}
 
 	private void Update()
 	{
-		if(Input.GetMouseButtonDown(0))
-		{		
-			Debug.Log("posMouse: " + DebugUtilites.GetMouseWorldPosition(transform.position));
-			Debug.Log("pos: " + hexGrid.GetXY(DebugUtilites.GetMouseWorldPosition(transform.position)));
-			
-			//Debug.Log("hex: " + hex.inHexArea(DebugUtilites.GetMouseWorldPosition(transform.position)));
-
-			Hexagon<Soldier> h = hexGrid.GetValue(DebugUtilites.GetMouseWorldPosition(transform.position));
-			//hexGrid.ClearHexMeshArray();
-			followCursor.UpdateNodeOfMapVisual(h, true);
+		if (Input.GetMouseButtonDown(0))
+		{
+			//findMap.ClearMap();
+			Vector3 pos = DebugUtilites.GetMouseWorldPosition(transform.position);
+			pathfinding.GetGrid().GetXY(pos, out int x, out int y);
+			List<HexPathNode> pathNodes = pathfinding.FindPath(x, y);
+			for(int i = 0; i < pathNodes.Count - 1; i++)
+			{
+				Debug.Log(pathNodes[i]);
+				Debug.DrawLine(new Vector3(pathNodes[i].X * pathfinding.GetGrid().Radius, pathNodes[i].Y * pathfinding.GetGrid().littleRadius), new Vector3(pathNodes[i + 1].X * pathfinding.GetGrid().Radius, pathNodes[i].Y * pathfinding.GetGrid().littleRadius), Color.white, 10f);
+			}
+			pathfinding.SetStartNode(pathNodes[^1]);
+			//grid.SetValue(pos, grid.GetValue(pos) + force );
 		}
-
+		if (Input.GetMouseButtonDown(1))
+		{
+			Vector3 pos = DebugUtilites.GetMouseWorldPosition(transform.position);
+			pathfinding.GetGrid().GetValue(pos).Value.IsWalking = !pathfinding.GetGrid().GetValue(pos).Value.IsWalking;
+			//findMap.UpdateFindMapVisual();
+		}
 	}
 
 	class FollowCursorHexMap<HexObject> where HexObject : IHexObject
@@ -64,8 +73,6 @@ public class TestingHex : MonoBehaviour
 		}
 		public void UpdateNodeOfMapVisual(Hexagon<HexObject> hex, bool isWhite)
 		{
-			Vector3 baseSize = new Vector3(1, 1) * hexGrid.Size;
-
 			int x = hex.positionX, y = hex.positionY;
 			int index = y * hexGrid.Width + x;
 			Vector2 uvStep = new Vector2(0, 0);
