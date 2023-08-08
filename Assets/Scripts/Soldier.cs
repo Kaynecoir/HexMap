@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Kars.Object;
+using Kars.Debug;
 
 public class Soldier : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class Soldier : MonoBehaviour
 	private GameObject square;
 	private Vector3 targetPos;
 	private float speed;
+	private List<HexPathNode> hexPathNodes;
+	private int index;
 
 	public void SetPosition(int x, int y, float size = 1.0f)
 	{
@@ -21,14 +24,33 @@ public class Soldier : MonoBehaviour
 		square.transform.localScale = Vector3.one * size;
 		transform.position = new Vector3(x, y) * size;
 	}
-	public void GoToPosition(Vector3Int pos)
+	public void GoToPosition(Vector3 pos)
 	{
-		GoToPosition(pos.x, pos.y);
+		PathfindingHex.Instance.GetGrid().GetXY(pos, out int x, out int y);
+		GoToPosition(x, y);
 	}
 	public void GoToPosition(int x, int y)
 	{
-		List<HexPathNode> list = PathfindingHex.Instance.FindPath(indexX, indexY, x, y);
+		hexPathNodes = PathfindingHex.Instance.FindPath(indexX, indexY, x, y);
+		index = 0;
+		targetPos = hexPathNodes[index].HexParant.worldPosition;
+	}
+	private void Update()
+	{
+		if (false)
+		{
+			transform.position += (transform.position - targetPos).normalized * speed * Time.deltaTime;
+			if ((transform.position - targetPos).x < 0.01f && (transform.position - targetPos).y < 0.01f)
+			{
+				index++;
+				targetPos = hexPathNodes[index].HexParant.worldPosition;
+			}
+		}
 
+		if (Input.GetMouseButtonDown(0))
+		{
+			//GoToPosition(DebugUtilites.GetMouseWorldPosition(PathfindingHex.Instance.GetGrid));
+		}
 	}
 	//public up
 	////IEnumerator MoveToPath(int x, int y)

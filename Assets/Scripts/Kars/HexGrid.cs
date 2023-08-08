@@ -13,6 +13,7 @@ namespace Kars.Object
 		public float Radius { get; protected set; }
 		public float littleRadius { get; protected set; }
 		public bool isVertical { get; private set; }
+		public Vector3 PositionToWorld { get; protected set; }
 		public Vector3 PositionToCenter { get; protected set; }
 		public Mesh gridMesh;
 		protected TextMesh[,] textArray;
@@ -26,6 +27,7 @@ namespace Kars.Object
 			Width = width;
 			Radius = radius;
 			littleRadius = radius * Mathf.Sin(Mathf.PI / 3);
+			PositionToWorld = worldPosition;
 			PositionToCenter = positionToCenter;
 			this.isVertical = isVertical;
 			gridArray = new Hexagon<T>[Height, Width];
@@ -105,19 +107,11 @@ namespace Kars.Object
 			Vector3 pos = Vector3.zero;
 			if(isVertical)
 			{
-				pos = new Vector3((2 * x + 0) * MathF.Sqrt(3) / 2, y * 1.5f) * Radius + PositionToCenter;
-				if (y % 2 == 1)
-				{
-					pos = new Vector3((2 * x + 1) * MathF.Sqrt(3) / 2, y * 1.5f) * Radius + PositionToCenter;
-				}
+				pos = new Vector3((2 * x + (y % 2)) * MathF.Sqrt(3) / 2, y * 1.5f) * Radius + PositionToCenter;
 			}
 			else
 			{
-				pos = new Vector3(x * 1.5f, (2 * y + 0) * MathF.Sqrt(3) / 2) * Radius + PositionToCenter;
-				if (x % 2 == 1)
-				{
-					pos = new Vector3(x * 1.5f, (2 * y + 1) * MathF.Sqrt(3) / 2) * Radius + PositionToCenter;
-				}
+				pos = new Vector3(x * 1.5f, (2 * y + (x % 2)) * MathF.Sqrt(3) / 2) * Radius + PositionToCenter;
 			}
 
 			return pos;

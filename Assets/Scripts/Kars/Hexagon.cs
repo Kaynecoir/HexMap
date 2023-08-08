@@ -34,32 +34,6 @@ namespace Kars
 				this.isVertical = isVertical;
 				this.neigbourHex = new List<Hexagon<T>>();
 				this.corner = new Vector3[6];
-				//if(this.isVertical)
-				//{
-				//	neigbourHex = new Dictionary<string, Hexagon<HexObject>>()
-				//	{
-				//		{"left-top"	  , null },
-				//		{"left-middle", null },
-				//		{"left-bottom", null },
-
-				//		{"right-top"   , null },
-				//		{"right-middle", null },
-				//		{"right-bottom", null },
-				//	};
-				//}
-				//else
-				//{
-				//	neigbourHex = new Dictionary<string, Hexagon<HexObject>>()
-				//	{
-				//		{"left-up"  , null },
-				//		{"center-up", null },
-				//		{"right-up" , null },
-
-				//		{"left-down"  , null },
-				//		{"center-down", null },
-				//		{"right-down" , null },
-				//	};
-				//}
 
 				SetCorner();
 			}
@@ -72,35 +46,6 @@ namespace Kars
 				this.neigbourHex = new List<Hexagon<T>>();
 				this.Value = valueFunc(this);
 				this.corner = new Vector3[6];
-				
-				//if(this.isVertical)
-				//{
-				//	neigbourHex = new Dictionary<string, Hexagon<HexObject>>()
-				//	{
-				//		{"left-top"	  , null },
-				//		{"left-middle", null },
-				//		{"left-bottom", null },
-
-				//		{"right-top"   , null },
-				//		{"right-middle", null },
-				//		{"right-bottom", null },
-				//	};
-				//}
-				//else
-				//{
-				//	neigbourHex = new Dictionary<string, Hexagon<HexObject>>()
-				//	{
-				//		{"left-up"  , null },
-				//		{"center-up", null },
-				//		{"right-up" , null },
-
-				//		{"left-down"  , null },
-				//		{"center-down", null },
-				//		{"right-down" , null },
-				//	};
-				//}
-
-				
 
 				SetCorner();
 			}
