@@ -17,33 +17,35 @@ public class TestingHex : MonoBehaviour
 	private void Start()
 	{
 		Vector3 pos = new Vector3(radius * (isVertical ? Mathf.Sin(Mathf.PI / 3): 1), radius * (!isVertical ? Mathf.Sin(Mathf.PI / 3) : 1));
-		pathfinding = new PathfindingHex(height, width, radius, transform.position, isVertical);
-		hexGrid = pathfinding.GetGrid();
+		//pathfinding = new PathfindingHex(height, width, radius, transform.position, isVertical);
+		PathfindingHex.Instance.SetGrid(height, width, radius, transform.position, isVertical);
+		//hexGrid = pathfinding.GetGrid();
+		hexGrid = PathfindingHex.Instance.GetGrid();
 
 
 		MeshFilter meshFilter = GetComponent<MeshFilter>();
 		//meshFilter.mesh = hexGrid.CreateMeshArray();
-		findMap = new FindHexMapVisual(pathfinding, meshFilter, transform);
+		//findMap = new FindHexMapVisual(pathfinding, meshFilter, transform);
 		//followCursor = new FollowCursorHexMap<HexPathNode>(hexGrid, meshFilter);
+		findMap = new FindHexMapVisual(PathfindingHex.Instance, meshFilter, transform);
 	}
 
 	private void Update()
 	{
-		if (Input.GetMouseButtonDown(0))
-		{
-			findMap.ClearMap();
-			Vector3 pos = DebugUtilites.GetMouseWorldPosition(transform.position);
-			pathfinding.GetGrid().GetXY(pos, out int x, out int y);
-			List<HexPathNode> pathNodes = pathfinding.FindPath(x, y);
-			pathfinding.SetStartNode(pathNodes[^1]);
-			//grid.SetValue(pos, grid.GetValue(pos) + force );
-		}
+		//if (Input.GetMouseButtonDown(0))
+		//{
+		//	findMap.ClearMap();
+		//	Vector3 pos = DebugUtilites.GetMouseWorldPosition(transform.position);
+		//	PathfindingHex.Instance.GetGrid().GetXY(pos, out int x, out int y);
+		//	List<HexPathNode> pathNodes = PathfindingHex.Instance.FindPath(x, y);
+		//	PathfindingHex.Instance.SetStartNode(pathNodes[^1]);
+		//}
 		if (Input.GetMouseButtonDown(1))
 		{
 			Vector3 pos = DebugUtilites.GetMouseWorldPosition(transform.position);
 
 			//pathfinding.GetGrid().GetValue(pos).Value.IsWalking = !pathfinding.GetGrid().GetValue(pos).Value.IsWalking;
-			pathfinding.SetWalking(pos, !pathfinding.GetGrid().GetValue(pos).Value.IsWalking);
+			PathfindingHex.Instance.SetWalking(pos, !PathfindingHex.Instance.GetGrid().GetValue(pos).Value.IsWalking);
 			findMap.UpdateFindMapVisual();
 		}
 	}

@@ -113,7 +113,6 @@ namespace Kars.Object
 			{
 				pos = new Vector3(x * 1.5f, (2 * y + (x % 2)) * MathF.Sqrt(3) / 2) * Radius + PositionToCenter;
 			}
-
 			return pos;
 		}
 		public bool inHexArea(int x, int y, Vector3 cursorPosition)
@@ -128,7 +127,6 @@ namespace Kars.Object
 		{
 			x = 0; y = 0;
 			Vector3 CursorToCenter = CursorPosition - PositionToCenter;
-
 			if (isVertical)
 			{
 				y = Mathf.RoundToInt(CursorPosition.y * 2 / (3 * Radius) - 0.5f);
