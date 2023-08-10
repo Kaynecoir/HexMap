@@ -28,8 +28,7 @@ namespace Karsss.Object
 
 		public PathfindingHex(int height = 1, int width = 1, float radius = 1.0f, Vector3 positionToWorld = default(Vector3), bool isVertical = false, bool isDebugging = false)
 		{
-			Vector3 pos = new Vector3(radius * (isVertical ? Mathf.Sin(Mathf.PI / 3) : 1), radius * (!isVertical ? Mathf.Sin(Mathf.PI / 3) : 1));
-			hexGrid = new HexGrid<HexPathNode>(height, width, radius, positionToWorld, pos, isVertical);
+			hexGrid = new HexGrid<HexPathNode>(height, width, radius, positionToWorld, isVertical);
 			for (int y = 0; y < hexGrid.Height; y++)
 			{
 				for (int x = 0; x < hexGrid.Width; x++)
@@ -43,8 +42,7 @@ namespace Karsss.Object
 		}
 		public PathfindingHex(int height, int width, float radius, Vector3 positionToWorld, Func<Hexagon<HexPathNode>, HexPathNode> createHexObject, bool isVertical = false, bool isDebugging = false)
 		{
-			Vector3 pos = new Vector3(radius * (isVertical ? Mathf.Sin(Mathf.PI / 3) : 1), radius * (!isVertical ? Mathf.Sin(Mathf.PI / 3) : 1));
-			hexGrid = new HexGrid<HexPathNode>(height, width, radius, positionToWorld, pos, createHexObject, isVertical);
+			hexGrid = new HexGrid<HexPathNode>(height, width, radius, positionToWorld, createHexObject, isVertical);
 			for(int y = 0; y < hexGrid.Height; y++)
 			{
 				for(int x = 0; x < hexGrid.Width; x++)
@@ -68,8 +66,7 @@ namespace Karsss.Object
 		}
 		public void SetGrid(int height, int width, float radius, Vector3 positionToWorld, bool isVertical)
 		{
-			Vector3 pos = new Vector3(radius * (isVertical ? Mathf.Sin(Mathf.PI / 3) : 1), radius * (!isVertical ? Mathf.Sin(Mathf.PI / 3) : 1));
-			hexGrid = new HexGrid<HexPathNode>(height, width, radius, positionToWorld, pos, isVertical);
+			hexGrid = new HexGrid<HexPathNode>(height, width, radius, positionToWorld, isVertical);
 			for (int y = 0; y < hexGrid.Height; y++)
 			{
 				for (int x = 0; x < hexGrid.Width; x++)

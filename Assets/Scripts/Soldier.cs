@@ -27,7 +27,7 @@ public class Soldier : MonoBehaviour
 		indexY = y;
 		this.size = size;
 
-		transform.position = PathfindingHex.Instance.GetGrid().GetPositionFromCenter(x, y) + zeroCoordinate.position;
+		transform.position = PathfindingHex.Instance.GetGrid().GetPositionFromWorld(x, y);
 	}
 	public void GoToPosition(Vector3 pos)
 	{
@@ -46,11 +46,11 @@ public class Soldier : MonoBehaviour
 		if (hexPathNodes != null)
 		{
 
-			transform.position += (targetPos - (transform.position - zeroCoordinate.position)).normalized * speed * Time.deltaTime;
+			transform.position += (targetPos - (transform.position)).normalized * speed * Time.deltaTime;
 
-			if (targetPos != null && Mathf.Abs((transform.position - zeroCoordinate.position - targetPos).x) < 0.1f && Mathf.Abs((transform.position - zeroCoordinate.position - targetPos).y) < 0.1f)
+			if (targetPos != null && Mathf.Abs((transform.position - targetPos).x) < 0.1f && Mathf.Abs((transform.position - targetPos).y) < 0.1f)
 			{
-				PathfindingHex.Instance.GetGrid().GetXY(transform.position - zeroCoordinate.position, out indexX, out indexY);
+				PathfindingHex.Instance.GetGrid().GetXY(transform.position, out indexX, out indexY);
 				if (index < hexPathNodes.Count)
 				{
 					targetPos = hexPathNodes[index].HexParant.worldPosition;
@@ -61,7 +61,7 @@ public class Soldier : MonoBehaviour
 
 		if (Input.GetMouseButtonDown(0))
 		{
-			GoToPosition(DebugUtilites.GetMouseWorldPosition(zeroCoordinate.position));
+			GoToPosition(DebugUtilites.GetMouseWorldPosition());
 		}
 	}
 }
