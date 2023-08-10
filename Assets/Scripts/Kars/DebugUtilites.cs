@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Kars.Debug
+namespace Karsss.Debug
 {
 	public static class DebugUtilites
 	{

@@ -2,40 +2,40 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Kars.Object
+namespace Karsss.Object
 { 
 	public class PathfindingSquare
 	{
 		private const int MOVE_STRAIGHT_COST = 10;
 		private const int MOVE_DIAGONAL_COST = 14;
 
-		private Grid<IPathNode> grid;
-		private IPathNode startNode;
-		private IPathNode endNode;
-		private List<IPathNode> openList;
-		private List<IPathNode> closedList;
+		private Grid<PathNode> grid;
+		private PathNode startNode;
+		private PathNode endNode;
+		private List<PathNode> openList;
+		private List<PathNode> closedList;
 
-		public delegate void GridFunc(IPathNode node);
+		public delegate void GridFunc(PathNode node);
 		public event GridFunc AddToOpenList, AddToClosedList, FindWay, ChangeWalking;
 		public PathfindingSquare(int height, int width, float size, Vector3 positionToWorld, bool isDebugging = false)
 		{
-			grid = new Grid<IPathNode>(height, width, size, positionToWorld, (Grid<IPathNode> grid, int y, int x) => new PathNode(grid, y, x));
+			grid = new Grid<PathNode>(height, width, size, positionToWorld, (Grid<PathNode> grid, int y, int x) => new PathNode(grid, y, x));
 			SetStartNode(0, 0);
 			if (isDebugging) grid.SeeDebug();
 		}
 
-		public Grid<IPathNode> GetGrid()
+		public Grid<PathNode> GetGrid()
 		{
 			return grid;
 		}
 		public void SetWalking(Vector3 pos, bool value)
 		{
 			grid.GetXY(pos, out int x, out int y);
-			IPathNode node = grid[y, x];
+			PathNode node = grid[y, x];
 			node.IsWalking = value;
 			ChangeWalking?.Invoke(node);
 		}
-		public void SetStartNode(IPathNode node)
+		public void SetStartNode(PathNode node)
 		{
 			startNode = node;
 		}
@@ -43,23 +43,23 @@ namespace Kars.Object
 		{
 			startNode = grid[y, x];
 		}
-		public List<IPathNode> FindPath(int endX, int endY)
+		public List<PathNode> FindPath(int endX, int endY)
 		{
 			return FindPath(startNode.X, startNode.Y, endX, endY);
 		}
-		public List<IPathNode> FindPath(int startX, int startY, int endX, int endY)
+		public List<PathNode> FindPath(int startX, int startY, int endX, int endY)
 		{
 			startNode = grid.GetValue(startX, startY);
 			endNode = grid.GetValue(endX, endY);
-			openList = new List<IPathNode> { startNode };
+			openList = new List<PathNode> { startNode };
 			AddToOpenList?.Invoke(startNode);
-			closedList = new List<IPathNode>();
+			closedList = new List<PathNode>();
 
 			for(int y = 0; y < grid.Height; y++)
 			{
 				for(int x = 0; x < grid.Width; x++)
 				{
-					IPathNode pathNode = grid.GetValue(x, y);
+					PathNode pathNode = grid.GetValue(x, y);
 					pathNode.GCost = int.MaxValue;
 					pathNode.CalculateFCost();
 					pathNode.CameFromNode = null;
@@ -71,11 +71,11 @@ namespace Kars.Object
 
 			while(openList.Count > 0)
 			{
-				IPathNode currentNode = GetLowerFCostNode(openList);
+				PathNode currentNode = GetLowerFCostNode(openList);
 				if(currentNode == endNode)
 				{
 					// Final
-					List<IPathNode> way = CalculatePath(endNode);
+					List<PathNode> way = CalculatePath(endNode);
 					FindWay?.Invoke(endNode);
 					return way;
 				}
@@ -84,7 +84,7 @@ namespace Kars.Object
 				closedList.Add(currentNode);
 				AddToClosedList?.Invoke(currentNode);
 
-				foreach(IPathNode neighbourNode in GetNeighbourList(currentNode))
+				foreach(PathNode neighbourNode in GetNeighbourList(currentNode))
 				{
 					if (closedList.Contains(neighbourNode)) continue;
 
@@ -108,9 +108,9 @@ namespace Kars.Object
 			// way not found
 			return null;
 		}
-		private List<IPathNode> GetNeighbourList(IPathNode currentNode)
+		private List<PathNode> GetNeighbourList(PathNode currentNode)
 		{
-			List<IPathNode> neighbourList = new List<IPathNode>();
+			List<PathNode> neighbourList = new List<PathNode>();
 			int x = currentNode.X, y = currentNode.Y;
 			if (x + 1 < grid.Width)
 			{
@@ -131,10 +131,10 @@ namespace Kars.Object
 
 			return neighbourList;
 		}
-		private List<IPathNode> CalculatePath(IPathNode endNode)
+		private List<PathNode> CalculatePath(PathNode endNode)
 		{
-			List<IPathNode> pathNodes = new List<IPathNode> { endNode };
-			IPathNode nextPathStep = endNode.CameFromNode;
+			List<PathNode> pathNodes = new List<PathNode> { endNode };
+			PathNode nextPathStep = endNode.CameFromNode;
 			while(nextPathStep != null)
 			{
 				pathNodes.Add(nextPathStep);
@@ -143,16 +143,16 @@ namespace Kars.Object
 			pathNodes.Reverse();
 			return pathNodes;
 		}
-		private int CalculateDistance(IPathNode a, IPathNode b)
+		private int CalculateDistance(PathNode a, PathNode b)
 		{
 			int distanceX = Mathf.Abs(a.X - b.X);
 			int distanceY = Mathf.Abs(a.Y - b.Y);
 			int remaining = Mathf.Abs(distanceY - distanceX);
 			return remaining * MOVE_STRAIGHT_COST + Mathf.Min(distanceX, distanceY) * MOVE_DIAGONAL_COST;
 		}
-		private IPathNode GetLowerFCostNode(List<IPathNode> pathNodeList)
+		private PathNode GetLowerFCostNode(List<PathNode> pathNodeList)
 		{
-			IPathNode lowerFCostNode = pathNodeList[0];
+			PathNode lowerFCostNode = pathNodeList[0];
 			for(int i = 1; i < pathNodeList.Count; i++)
 			{
 				if(lowerFCostNode.FCost > pathNodeList[i].FCost)
@@ -166,7 +166,7 @@ namespace Kars.Object
 
 	class FindMapVisual
 	{
-		private Grid<IPathNode> grid;
+		private Grid<PathNode> grid;
 		MeshFilter meshFilter;
 		Transform transform;
 
@@ -181,18 +181,18 @@ namespace Kars.Object
 			this.grid.ChangeValue += UpdateFindMapVisual;
 			this.meshFilter = meshFilter;
 			this.transform = transform;
-			pathfinding.AddToOpenList += (IPathNode node) => { UpdateNodeOfMapVisual(node, 0.2f);/*UnityEngine.Debug.Log(node);*/ };
-			pathfinding.AddToClosedList += (IPathNode node) => { UpdateNodeOfMapVisual(node, 0.6f); };
-			pathfinding.FindWay += (IPathNode node) =>
+			pathfinding.AddToOpenList += (PathNode node) => { UpdateNodeOfMapVisual(node, 0.2f);/*UnityEngine.Debug.Log(node);*/ };
+			pathfinding.AddToClosedList += (PathNode node) => { UpdateNodeOfMapVisual(node, 0.6f); };
+			pathfinding.FindWay += (PathNode node) =>
 			{
-				IPathNode current = node;
+				PathNode current = node;
 				while (current != null)
 				{
 					UpdateNodeOfMapVisual(current, 0.99f);
 					current = current.CameFromNode;
 				}
 			};
-			pathfinding.ChangeWalking += (IPathNode node) => { UpdateNodeOfMapVisual(node, 0.1f); };
+			pathfinding.ChangeWalking += (PathNode node) => { UpdateNodeOfMapVisual(node, 0.1f); };
 
 			KarsMesh.CreateEmptyMeshArray(grid.Height * grid.Width, out vertices, out normals, out uv, out triangles);
 
@@ -226,7 +226,7 @@ namespace Kars.Object
 			meshFilter.mesh = mesh;
 		}
 
-		public void UpdateNodeOfMapVisual(IPathNode node, float step)
+		public void UpdateNodeOfMapVisual(PathNode node, float step)
 		{
 			Vector3 baseSize = new Vector3(1, 1) * grid.Size;
 

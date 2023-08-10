@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Kars.Object;
-using Kars.Debug;
+using Karsss.Object;
+using Karsss.Debug;
 
 public class TestingHex : MonoBehaviour
 {

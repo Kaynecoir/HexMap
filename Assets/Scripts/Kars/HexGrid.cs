@@ -2,11 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Kars.Debug;
+using Karsss.Debug;
 
-namespace Kars.Object
+namespace Karsss.Object
 {
-    public class HexGrid<T> where T : IHexObject
+    public class HexGrid<T>
     {
 		public int Height { get; protected set; }
 		public int Width { get; protected set; }

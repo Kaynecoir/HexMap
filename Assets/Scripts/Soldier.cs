@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Kars.Object;
-using Kars.Debug;
+using Karsss.Object;
+using Karsss.Debug;
 
 public class Soldier : MonoBehaviour
 {
@@ -48,7 +48,7 @@ public class Soldier : MonoBehaviour
 
 			transform.position += (targetPos - (transform.position - zeroCoordinate.position)).normalized * speed * Time.deltaTime;
 
-			if (targetPos != null && Mathf.Abs((transform.position - zeroCoordinate.position - targetPos).x) < 0.01f && Mathf.Abs((transform.position - zeroCoordinate.position - targetPos).y) < 0.01f)
+			if (targetPos != null && Mathf.Abs((transform.position - zeroCoordinate.position - targetPos).x) < 0.1f && Mathf.Abs((transform.position - zeroCoordinate.position - targetPos).y) < 0.1f)
 			{
 				PathfindingHex.Instance.GetGrid().GetXY(transform.position - zeroCoordinate.position, out indexX, out indexY);
 				if (index < hexPathNodes.Count)
@@ -64,21 +64,4 @@ public class Soldier : MonoBehaviour
 			GoToPosition(DebugUtilites.GetMouseWorldPosition(zeroCoordinate.position));
 		}
 	}
-	//public up
-	////IEnumerator MoveToPath(int x, int y)
-	////{
-	////	foreach(HexPathNode node in PathfindingHex.Instance.FindPath(indexX, indexY, x, y))
-	////	{
-
-	////	}
-	////}
-
-	//IEnumerator Move()
-	//{
-	//	while(positionX - targetPos.x <= 0.01f && positionY - targetPos.y <= 0.01f)
-	//	{
-	//		transform.position += new Vector3(positionX - targetPos.x, positionY - targetPos.y).normalized * speed * Time.deltaTime;
-	//		yield return null;
-	//	}
-	//}
 }

@@ -2,13 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Kars.Debug;
+using Karsss.Debug;
 
-namespace Kars
+namespace Karsss
 {
 	namespace Object
 	{
-		public class Hexagon<T> where T : IHexObject
+		public class Hexagon<T>
 		{
 			// Fields for work with HexGrid
 			public HexGrid<T> hexGrid;

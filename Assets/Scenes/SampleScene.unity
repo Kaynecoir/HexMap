@@ -252,8 +252,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 993f421e72171ce4dbe53f6e6fcf2f25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  height: 12
-  width: 18
+  height: 10
+  width: 16
   radius: 5
   isVertical: 1
   soldierObject: {fileID: 8053595550879156644, guid: c09eafdfd6d352644a890a7881ed2220, type: 3}
@@ -751,7 +751,7 @@ MonoBehaviour:
   indexY: 0
   size: 1
   zeroCoordinate: {fileID: 522469669}
-  speed: 10
+  speed: 20
 --- !u!212 &1283918725
 SpriteRenderer:
   m_ObjectHideFlags: 0

@@ -2,9 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Kars.Debug;
+using Karsss.Debug;
 
-namespace Kars.Object
+namespace Karsss.Object
 {
 	static class KarsMesh
 	{

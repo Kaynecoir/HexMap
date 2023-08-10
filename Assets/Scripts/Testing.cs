@@ -2,8 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Kars.Object;
-using Kars.Debug;
+using Karsss.Object;
+using Karsss.Debug;
 
 public class Testing : MonoBehaviour
 {
@@ -34,7 +34,7 @@ public class Testing : MonoBehaviour
 			findMap.ClearMap();
 			Vector3 pos = DebugUtilites.GetMouseWorldPosition();
 			pathfinding.GetGrid().GetXY(pos, out int x, out int y);
-			List<IPathNode> pathNodes = pathfinding.FindPath(x, y);
+			List<PathNode> pathNodes = pathfinding.FindPath(x, y);
 
 			pathfinding.SetStartNode(pathNodes[^1]);
 			//grid.SetValue(pos, grid.GetValue(pos) + force );

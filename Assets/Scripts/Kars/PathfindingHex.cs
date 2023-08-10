@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Kars.Object
+namespace Karsss.Object
 {
     public class PathfindingHex
     {
@@ -62,7 +62,7 @@ namespace Kars.Object
 		{
 			return hexGrid;
 		}
-		public void SetGrid(HexGrid<IHexObject> hexGrid)
+		public void SetGrid(HexGrid<HexPathNode> hexGrid)
 		{
 			SetGrid(hexGrid.Height, hexGrid.Width, hexGrid.Radius, default(Vector3), hexGrid.isVertical);
 		}
@@ -244,17 +244,17 @@ namespace Kars.Object
 			this.grid.ChangeValue += UpdateFindMapVisual;
 			this.meshFilter = meshFilter;
 			this.transform = transform;
-			pathfinding.AddToOpenList += (HexPathNode node) => { UpdateNodeOfMapVisual(node, 0.2f);/*UnityEngine.Debug.Log(node);*/ };
-			pathfinding.AddToClosedList += (HexPathNode node) => { UpdateNodeOfMapVisual(node, 0.6f); };
-			pathfinding.FindWay += (HexPathNode node) =>
-			{
-				HexPathNode current = node;
-				while (current != null)
-				{
-					UpdateNodeOfMapVisual(current, 0.99f);
-					current = current.CameFromNode;
-				}
-			};
+			//pathfinding.AddToOpenList += (HexPathNode node) => { UpdateNodeOfMapVisual(node, 0.2f);/*UnityEngine.Debug.Log(node);*/ };
+			//pathfinding.AddToClosedList += (HexPathNode node) => { UpdateNodeOfMapVisual(node, 0.6f); };
+			//pathfinding.FindWay += (HexPathNode node) =>
+			//{
+			//	HexPathNode current = node;
+			//	while (current != null)
+			//	{
+			//		UpdateNodeOfMapVisual(current, 0.99f);
+			//		current = current.CameFromNode;
+			//	}
+			//};
 			pathfinding.ChangeWalking += (HexPathNode node) => { UpdateNodeOfMapVisual(node, 0.1f); };
 
 			grid.CreateMeshArray(out vertices, out normals, out uv, out triangles);

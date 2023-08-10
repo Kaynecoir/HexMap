@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace Kars.Object
+namespace Karsss.Object
 {
-	public class HexPathNode : IHexObject
+	public class HexPathNode
 	{
 		public Hexagon<HexPathNode> HexParant { get; set; }
 
