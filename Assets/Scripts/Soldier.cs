@@ -7,14 +7,16 @@ using Karsss.Debug;
 public class Soldier : MonoBehaviour
 {
 	public int indexX, indexY;
-	private float positionX, positionY;
 	public float size = 1.0f;
-	private GameObject square;
-	private Vector3 targetPos;
 	public Transform zeroCoordinate;
 	public float speed;
-	private List<HexPathNode> hexPathNodes;
-	private int index;
+
+	protected float positionX, positionY;
+	protected GameObject square;
+	protected Vector3 targetPos;
+	protected List<HexPathNode> hexPathNodes;
+	protected HexPathNode hexPosition;
+	protected int index;
 
 	private void Start()
 	{
@@ -28,6 +30,15 @@ public class Soldier : MonoBehaviour
 		this.size = size;
 
 		transform.position = PathfindingHex.Instance.GetGrid().GetPositionFromWorld(x, y);
+	}
+	public void SetPosition(HexPathNode hexPos, float size = 1.0f)
+	{
+		hexPosition = hexPos;
+		indexX = hexPosition.X;
+		indexY = hexPosition.Y;
+		this.size = size;
+
+		transform.position = PathfindingHex.Instance.GetGrid()[hexPosition.Y, hexPosition.X].worldPosition;
 	}
 	public void GoToPosition(Vector3 pos)
 	{
@@ -50,11 +61,23 @@ public class Soldier : MonoBehaviour
 
 			if (targetPos != null && Mathf.Abs((transform.position - targetPos).x) < 0.1f && Mathf.Abs((transform.position - targetPos).y) < 0.1f)
 			{
+				UnityEngine.Debug.Log("<-1" + indexX + " " + indexY + " = " + PathfindingHex.Instance.GetGrid().GetValue(indexX, indexY).Value.IsWalking);
+				PathfindingHex.Instance.SetWalking(indexX, indexY, !PathfindingHex.Instance.GetGrid().GetValue(indexX, indexY).Value.IsWalking);
+				UnityEngine.Debug.Log("<-2" + indexX + " " + indexY + " = " + PathfindingHex.Instance.GetGrid().GetValue(indexX, indexY).Value.IsWalking);
+
 				PathfindingHex.Instance.GetGrid().GetXY(transform.position, out indexX, out indexY);
+				UnityEngine.Debug.Log("->" + indexX + " " + indexY + " = " + PathfindingHex.Instance.GetGrid().GetValue(indexX, indexY).Value.IsWalking);
+				PathfindingHex.Instance.SetWalking(indexX, indexY, !PathfindingHex.Instance.GetGrid().GetValue(indexX, indexY).Value.IsWalking);
+				PathfindingHex.Instance.mapVisual.UpdateFindMapVisual();
+
 				if (index < hexPathNodes.Count)
 				{
 					targetPos = hexPathNodes[index].HexParant.worldPosition;
 					++index;
+				}
+				else if(index == hexPathNodes.Count)
+				{
+					hexPathNodes = null;
 				}
 			}
 		}

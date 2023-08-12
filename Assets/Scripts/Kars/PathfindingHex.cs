@@ -10,13 +10,17 @@ namespace Karsss.Object
 		private const int MOVE_STRAIGHT_COST = 10;
 
 		private static PathfindingHex instance;
-		public static PathfindingHex Instance { get
+		public static PathfindingHex Instance 
+		{ get
 			{
 				if (instance == null)
 					instance = new PathfindingHex();
 				return instance;
 			}
 		}
+
+		public FindHexMapVisual mapVisual;
+
 		private HexGrid<HexPathNode> hexGrid;
 		private HexPathNode startNode;
 		private HexPathNode endNode;
@@ -79,6 +83,12 @@ namespace Karsss.Object
 		public void SetWalking(Vector3 pos, bool value)
 		{
 			hexGrid.GetXY(pos, out int x, out int y);
+			HexPathNode node = hexGrid[y, x].Value;
+			node.IsWalking = value;
+			ChangeWalking?.Invoke(node);
+		}
+		public void SetWalking(int x, int y, bool value)
+		{
 			HexPathNode node = hexGrid[y, x].Value;
 			node.IsWalking = value;
 			ChangeWalking?.Invoke(node);
@@ -224,7 +234,7 @@ namespace Karsss.Object
 		}
 	}
 
-	class FindHexMapVisual
+	public class FindHexMapVisual
 	{
 		private HexGrid<HexPathNode> grid;
 		MeshFilter meshFilter;

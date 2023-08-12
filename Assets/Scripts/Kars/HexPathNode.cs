@@ -26,7 +26,6 @@ namespace Karsss.Object
 		public HexPathNode(Hexagon<HexPathNode> hex)
 		{
 			this.HexParant = hex;
-			this.Grid = hex.hexGrid;
 			this.Y = hex.positionY;
 			this.X = hex.positionX;
 			IsWalking = true;

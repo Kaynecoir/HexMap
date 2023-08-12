@@ -10,21 +10,17 @@ namespace Karsss
 	{
 		public class Hexagon<T>
 		{
-			// Fields for work with HexGrid
-			public HexGrid<T> hexGrid;
-			public int positionX { get; private set; }
-			public int positionY { get; private set; }
+			public int positionX { get; protected set; }
+			public int positionY { get; protected set; }
 			//public Dictionary<string, Hexagon< HexObject>> neigbourHex;
-			public List<Hexagon<T>> neigbourHex { get; private set; }
-			public T Value { get; private set; }
-
-
-			public Vector3 worldPosition { get; private set; }
-			public Vector3[] corner { get; private set; }
-			public float radius { get; private set; }
+			public List<Hexagon<T>> neigbourHex { get; protected set; }
+			public T Value { get; protected set; }
+			public Vector3 worldPosition { get; protected set; }
+			public Vector3[] corner { get; protected set; }
+			public float radius { get; protected set; }
 			public float littleRadius { get; protected set; }
-			public float height { get; private set; }   // for 3D
-			public bool isVertical { get; private set; }
+			public float height { get; protected set; }   // for 3D
+			public bool isVertical { get; protected set; }
 
 			public Hexagon(float radius, Vector3 worldPosition = default(Vector3), T value = default(T), bool isVertical = false)
 			{
@@ -64,7 +60,6 @@ namespace Karsss
 			public void SetGrid(int x, int y, HexGrid<T> hexGrid)
 			{
 				this.positionX = x; this.positionY = y;
-				this.hexGrid = hexGrid;
 			}
 			public void SetValue(T val)
 			{

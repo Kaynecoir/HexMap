@@ -8,7 +8,7 @@ public class TestingHex : MonoBehaviour
 {
 	HexGrid<HexPathNode> hexGrid;
 	PathfindingHex pathfinding;
-	FindHexMapVisual findMap;
+	public FindHexMapVisual findMap;
 
 	public int height, width;
 	public float radius;
@@ -24,6 +24,7 @@ public class TestingHex : MonoBehaviour
 		MeshFilter meshFilter = GetComponent<MeshFilter>();
 
 		findMap = new FindHexMapVisual(PathfindingHex.Instance, meshFilter, transform);
+		PathfindingHex.Instance.mapVisual = findMap;
 	}
 
 	private void Update()
