@@ -6,10 +6,11 @@ using Karsss.Debug;
 
 public class Soldier : MonoBehaviour
 {
-	public int indexX, indexY;
+	public int indexX = 0, indexY = 0;
 	public float size = 1.0f;
 	public Transform zeroCoordinate;
 	public float speed;
+	public SpriteRenderer spriteRenderer;
 
 	protected float positionX, positionY;
 	protected GameObject square;
@@ -20,8 +21,7 @@ public class Soldier : MonoBehaviour
 
 	private void Start()
 	{
-		SetPosition(0, 0, 1);
-
+		spriteRenderer = GetComponent<SpriteRenderer>();
 	}
 	public void SetPosition(int x, int y, float size = 1.0f)
 	{
@@ -29,6 +29,7 @@ public class Soldier : MonoBehaviour
 		indexY = y;
 		this.size = size;
 
+		PathfindingHex.Instance.SetWalking(indexX, indexY, !PathfindingHex.Instance.GetGrid().GetValue(indexX, indexY).Value.IsWalking);
 		transform.position = PathfindingHex.Instance.GetGrid().GetPositionFromWorld(x, y);
 	}
 	public void SetPosition(HexPathNode hexPos, float size = 1.0f)
@@ -50,7 +51,7 @@ public class Soldier : MonoBehaviour
 		//PathfindingHex.Instance.GetGrid().GetXY(transform.position, out indexX, out indexY);
 		hexPathNodes = PathfindingHex.Instance.FindPath(indexX, indexY, x, y);
 		index = 0;
-		targetPos = hexPathNodes[index].HexParant.worldPosition;
+		if(hexPathNodes != null)targetPos = hexPathNodes[index].HexParant.worldPosition;
 	}
 	private void Update()
 	{
@@ -61,12 +62,9 @@ public class Soldier : MonoBehaviour
 
 			if (targetPos != null && Mathf.Abs((transform.position - targetPos).x) < 0.1f && Mathf.Abs((transform.position - targetPos).y) < 0.1f)
 			{
-				UnityEngine.Debug.Log("<-1" + indexX + " " + indexY + " = " + PathfindingHex.Instance.GetGrid().GetValue(indexX, indexY).Value.IsWalking);
 				PathfindingHex.Instance.SetWalking(indexX, indexY, !PathfindingHex.Instance.GetGrid().GetValue(indexX, indexY).Value.IsWalking);
-				UnityEngine.Debug.Log("<-2" + indexX + " " + indexY + " = " + PathfindingHex.Instance.GetGrid().GetValue(indexX, indexY).Value.IsWalking);
 
 				PathfindingHex.Instance.GetGrid().GetXY(transform.position, out indexX, out indexY);
-				UnityEngine.Debug.Log("->" + indexX + " " + indexY + " = " + PathfindingHex.Instance.GetGrid().GetValue(indexX, indexY).Value.IsWalking);
 				PathfindingHex.Instance.SetWalking(indexX, indexY, !PathfindingHex.Instance.GetGrid().GetValue(indexX, indexY).Value.IsWalking);
 				PathfindingHex.Instance.mapVisual.UpdateFindMapVisual();
 
@@ -80,11 +78,6 @@ public class Soldier : MonoBehaviour
 					hexPathNodes = null;
 				}
 			}
-		}
-
-		if (Input.GetMouseButtonDown(0))
-		{
-			GoToPosition(DebugUtilites.GetMouseWorldPosition());
 		}
 	}
 }

@@ -168,6 +168,7 @@ namespace Karsss.Object
 				}
 			}
 			// way not found
+			UnityEngine.Debug.LogWarning("Not Found Way");
 			return null;
 		}
 
