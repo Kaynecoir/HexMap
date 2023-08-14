@@ -15,23 +15,25 @@ public class TestingHex : MonoBehaviour
 	public bool isVertical;
 	public GameObject soldierObject;
 	public List<Soldier> soldList;
-	public Soldier? currentSoldier;
+	public Soldier currentSoldier;
 	private void Start()
 	{
 		Vector3 pos = new Vector3(radius * (isVertical ? Mathf.Sin(Mathf.PI / 3) : 1), radius * (!isVertical ? Mathf.Sin(Mathf.PI / 3) : 1));
 		PathfindingHex.Instance.SetGrid(height, width, radius, transform.position, isVertical);
 		hexGrid = PathfindingHex.Instance.GetGrid();
 
+		MeshFilter meshFilter = GetComponent<MeshFilter>();
+
+		findMap = new FindHexMapVisual(PathfindingHex.Instance, meshFilter, transform);
+		PathfindingHex.Instance.mapVisual = findMap;
+
 		foreach(Soldier s in soldList)
 		{
 			s.SetPosition(s.indexX, s.indexY);
 
 		}
-
-		MeshFilter meshFilter = GetComponent<MeshFilter>();
-
-		findMap = new FindHexMapVisual(PathfindingHex.Instance, meshFilter, transform);
-		PathfindingHex.Instance.mapVisual = findMap;
+		ChooseSoldier(soldList[0]);
+		findMap.UpdateFindMapVisual();
 	}
 
 	private void Update()
@@ -50,18 +52,25 @@ public class TestingHex : MonoBehaviour
 
 			if (currentSoldier != null)
 			{
-				currentSoldier.GoToPosition(DebugUtilites.GetMouseWorldPosition());
-			}
-			PathfindingHex.Instance.GetGrid().GetXY(pos, out int x, out int y);
-			foreach (Soldier s in soldList)
-			{
-				if(s.indexX == x && s.indexY == y)
+				if (currentSoldier.GoToPosition(DebugUtilites.GetMouseWorldPosition()))
 				{
-					if (currentSoldier != null) currentSoldier.spriteRenderer.color = Color.green;
-					currentSoldier = s;
-					currentSoldier.spriteRenderer.color = Color.white;
+					NextSoldier();
 				}
-			}	
+			}
 		}
+	}
+
+	public void ChooseSoldier(Soldier soldier)
+	{
+		if (currentSoldier != null) currentSoldier.spriteRenderer.color = Color.green;
+		if (soldier != null) currentSoldier = soldier;
+
+		if (soldier != null) currentSoldier.spriteRenderer.color = Color.white;
+	}
+	public void NextSoldier()
+	{
+		int i = soldList.IndexOf(currentSoldier);
+		Debug.Log(i);
+		ChooseSoldier(soldList[(i + 1) < soldList.Count ? (i + 1) : 0]);
 	}
 }
