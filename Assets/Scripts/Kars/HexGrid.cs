@@ -126,6 +126,10 @@ namespace Karsss.Object
 		{
 			return gridArray[y, x].inHexArea(cursorPosition - gridArray[y, x].worldPosition);
 		}
+		public bool inHexArea(int x, int y, Vector3 cursorPosition, out int seq)
+		{
+			return gridArray[y, x].inHexArea(cursorPosition - gridArray[y, x].worldPosition, out seq);
+		}
 		public Vector3Int GetXY(Vector3 worldPosition)
 		{
 			return GetXY(worldPosition, out int x, out int y);
@@ -223,6 +227,105 @@ namespace Karsss.Object
 				}
 			}
 			x = 0;	y = 0;
+			return new Vector3Int(x, y);
+		}
+		public Vector3Int GetXY(Vector3 worldPosition, out int seq)
+		{
+			return GetXY(worldPosition, out int x, out int y, out seq);
+		}
+		public Vector3Int GetXY(Vector3 CursorPosition, out int x, out int y, out int seq)
+		{
+			x = 0; y = 0; seq = 0;
+			Vector3 CursorToCenter = CursorPosition - zeroCoord;
+			if (isVertical)
+			{
+				// Находим x и y по положению курсора относительно нулевого координата
+				y = Mathf.RoundToInt(CursorToCenter.y * 2 / (3 * Radius) - 0.5f);
+				x = Mathf.RoundToInt((CursorToCenter.x / littleRadius - (y % 2) - 1.0f) / 2);
+
+				if (x >= 0 && x < Width && y >= 0 && y < Height)
+				{
+					if (y % 2 == 0)
+					{
+						// Проверяем находиться ли курсор в гексагоне по положению курсора относительно мира, так как гексагон проверяет по мировым координатам
+						if (inHexArea(x, y, CursorPosition, out seq))
+						{
+							return new Vector3Int(x, y);
+						}
+						// Проверяем находиться ли курсор в гексагоне по положению курсора относительно мира, так как гексагон проверяет по мировым координатам
+						if (y - 1 >= 0 && x - 1 >= 0 && inHexArea(x - 1, y - 1, CursorPosition, out seq))
+						{
+							return new Vector3Int(--x, --y);
+						}
+						// Проверяем находиться ли курсор в гексагоне по положению курсора относительно мира, так как гексагон проверяет по мировым координатам
+						if (y - 1 >= 0 && inHexArea(x, y - 1, CursorPosition, out seq))
+						{
+							return new Vector3Int(x, --y);
+						}
+					}
+					else
+					{
+						// Проверяем находиться ли курсор в гексагоне по положению курсора относительно мира, так как гексагон проверяет по мировым координатам
+						if (inHexArea(x, y, CursorPosition, out seq))
+						{
+							return new Vector3Int(x, y);
+						}
+						// Проверяем находиться ли курсор в гексагоне по положению курсора относительно мира, так как гексагон проверяет по мировым координатам
+						if (y - 1 >= 0 && x + 1 < Width && inHexArea(x + 1, y - 1, CursorPosition, out seq))
+						{
+							return new Vector3Int(++x, --y);
+						}
+						// Проверяем находиться ли курсор в гексагоне по положению курсора относительно мира, так как гексагон проверяет по мировым координатам
+						if (y - 1 >= 0 && inHexArea(x, y - 1, CursorPosition, out seq))
+						{
+							return new Vector3Int(x, --y);
+						}
+					}
+				}
+			}
+			else
+			{
+				x = Mathf.RoundToInt(CursorToCenter.x * 2 / (3 * Radius) - 0.0f);
+				y = Mathf.RoundToInt((CursorToCenter.y / littleRadius - (x % 2) - 0.0f) / 2);
+
+				UnityEngine.Debug.Log(x + " " + y);
+
+				if (x >= 0 && x < Width && y >= 0 && y < Height)
+				{
+
+					if (x % 2 == 0)
+					{
+						if (inHexArea(x, y, CursorPosition, out seq))
+						{
+							return new Vector3Int(x, y);        //UnityEngine.Debug.Log($"{x}, {y}: {gridArray[y, x].worldPosition} <- {CursorPosition} = {(gridArray[y, x].worldPosition - CursorPosition).magnitude} -> {inHexArea(x, y, CursorPosition)}");
+						}
+						if (x - 1 >= 0 && y - 1 >= 0 && inHexArea(x - 1, y - 1, CursorPosition, out seq))
+						{
+							return new Vector3Int(--x, --y);  //UnityEngine.Debug.Log($"{x - 1}, {y - 1}: {gridArray[y - 1, x - 1].worldPosition} <- {CursorPosition} = {(gridArray[y - 1, x - 1].worldPosition - CursorPosition).magnitude} -> {inHexArea(x - 1, y - 1, CursorPosition)}");
+						}
+						if (x - 1 >= 0 && inHexArea(x - 1, y, CursorPosition, out seq))
+						{
+							return new Vector3Int(x, --y);  //UnityEngine.Debug.Log($"{x}, {y - 1}: {gridArray[y-1, x].worldPosition} <- {CursorPosition} = {(gridArray[y-1, x].worldPosition - CursorPosition).magnitude} -> {inHexArea(x, y-1, CursorPosition)}");
+						}
+					}
+					else
+					{
+						if (inHexArea(x, y, CursorPosition, out seq))
+						{
+							return new Vector3Int(x, y);        //UnityEngine.Debug.Log($"{x}, {y}: {gridArray[y, x].worldPosition} <- {CursorPosition} = {(gridArray[y, x].worldPosition - CursorPosition).magnitude} -> {inHexArea(x, y, CursorPosition)}");
+						}
+						if (x - 1 >= 0 && y + 1 < Height && inHexArea(x - 1, y + 1, CursorPosition, out seq))
+						{
+							return new Vector3Int(--x, ++y);  //UnityEngine.Debug.Log($"{x - 1}, {y - 1}: {gridArray[y - 1, x - 1].worldPosition} <- {CursorPosition} = {(gridArray[y - 1, x - 1].worldPosition - CursorPosition).magnitude} -> {inHexArea(x - 1, y - 1, CursorPosition)}");
+						}
+						if (x - 1 >= 0 && inHexArea(x - 1, y, CursorPosition, out seq))
+						{
+							return new Vector3Int(x, --y);  //UnityEngine.Debug.Log($"{x}, {y - 1}: {gridArray[y-1, x].worldPosition} <- {CursorPosition} = {(gridArray[y-1, x].worldPosition - CursorPosition).magnitude} -> {inHexArea(x, y-1, CursorPosition)}");
+						}
+					}
+				}
+			}
+			x = 0; y = 0;
 			return new Vector3Int(x, y);
 		}
 		public void SetValue(Vector3 worldPosition, T val)

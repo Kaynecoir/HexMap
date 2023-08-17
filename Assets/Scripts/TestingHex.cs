@@ -6,10 +6,8 @@ using Karsss.Debug;
 
 public class TestingHex : MonoBehaviour
 {
-	HexGrid<HexPathNode> hexGrid;
-	PathfindingHex pathfinding;
+	public SoldierData[,] soldierArray;
 	public FindHexMapVisual findMap;
-
 	public int height, width;
 	public float radius;
 	public bool isVertical;
@@ -20,7 +18,7 @@ public class TestingHex : MonoBehaviour
 	{
 		Vector3 pos = new Vector3(radius * (isVertical ? Mathf.Sin(Mathf.PI / 3) : 1), radius * (!isVertical ? Mathf.Sin(Mathf.PI / 3) : 1));
 		PathfindingHex.Instance.SetGrid(height, width, radius, transform.position, isVertical);
-		hexGrid = PathfindingHex.Instance.GetGrid();
+		soldierArray = new SoldierData[height, width];
 
 		MeshFilter meshFilter = GetComponent<MeshFilter>();
 
@@ -30,8 +28,8 @@ public class TestingHex : MonoBehaviour
 		foreach(SoldierData s in soldList)
 		{
 
-			s.moveControll.SetPosition(s.moveControll.indexX, s.moveControll.indexY);
-
+			s.moveControll.SetPosition(s.indexX, s.indexY);
+			soldierArray[s.indexY, s.indexX] = s;
 		}
 		ChooseSoldier(soldList[0]);
 		findMap.UpdateFindMapVisual();
@@ -53,8 +51,10 @@ public class TestingHex : MonoBehaviour
 
 			if (currentSoldier != null)
 			{
-				if (currentSoldier.moveControll.GoToPosition(DebugUtilites.GetMouseWorldPosition()))
+				
+				if (PathfindingHex.Instance.GetGrid().GetValue(pos).Value.IsWalking && currentSoldier.moveControll.GoToPosition(DebugUtilites.GetMouseWorldPosition()))
 				{
+
 					NextSoldier();
 				}
 			}

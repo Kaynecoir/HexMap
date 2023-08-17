@@ -4,12 +4,18 @@ using UnityEngine;
 
 public class SoldierData : MonoBehaviour
 {
+    public TestingHex testingHex;
+
     public int maxHealth;
     public int curHealth;
     public int count = 1;
+    public int attackPower;
     public int stepRadius;
+    public int indexX = 0, indexY = 0;
 
-    public TestingHex testingHex;
+    public delegate void SoldierInteraction(SoldierData targetSoldier);
+    public event SoldierInteraction AttackSoldier;
+
 
     public SoldierMoveControll moveControll;
     public SoldierUI ui;
@@ -17,6 +23,14 @@ public class SoldierData : MonoBehaviour
     {
         moveControll = GetComponent<SoldierMoveControll>();
         ui = GetComponent<SoldierUI>();
+        AttackSoldier += (SoldierData targetSoldier) =>
+        {
+            targetSoldier.SetHealth(-attackPower * count);
+        };
+        AttackSoldier += (SoldierData targetSoldier) =>
+        {
+            Debug.Log("Attack " + targetSoldier.curHealth);
+        };
     }
 
     void Update()
@@ -26,7 +40,7 @@ public class SoldierData : MonoBehaviour
 
     public void SetCount(int c)
 	{
-        count -= c;
+        count += c;
         if (count <= 0)
         {
             testingHex.soldList.Remove(this);
@@ -40,7 +54,15 @@ public class SoldierData : MonoBehaviour
         while (curHealth <= 0)
         {
             curHealth += maxHealth;
+            SetCount(-1);
         }
     }
-
+    public void SetArrayPos(SoldierData soldier, int x, int y)
+    {
+        testingHex.soldierArray[y, x] = soldier;
+    }
+    public void Attack(SoldierData targetSoldier)
+    {
+        AttackSoldier?.Invoke(targetSoldier);
+    }
 }

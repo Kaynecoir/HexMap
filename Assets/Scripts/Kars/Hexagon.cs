@@ -106,6 +106,27 @@ namespace Karsss
 				return false;
 			}
 
+			public bool inHexArea(Vector3 mouseWorldPosition, out int seq, Vector3 ZeroCoordinate = default(Vector3))
+			{
+				return inHexArea(mouseWorldPosition.x, mouseWorldPosition.y, out seq, ZeroCoordinate);
+			}
+			public bool inHexArea(float x, float y, out int seq, Vector3 zeroCoordinate = default(Vector3))
+			{
+				x -= zeroCoordinate.x;
+				y -= zeroCoordinate.y;
+				seq = 0;
+				float angel_del = isVertical ? 90 : 0;
+
+				for (int i = 0; i < 6; i++)
+				{
+					seq = i;
+					DebugUtilites.RotateSysCoord(angel_del, ref x, ref y);
+					if (inTrianArea(x, y)) return true;
+					angel_del = 60;
+				}
+				return false;
+			}
+
 			public Mesh CreateHexMesh()
 			{
 				Mesh mesh = new Mesh();

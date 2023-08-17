@@ -11,18 +11,25 @@ public class SoldierUI : MonoBehaviour
 
     public SpriteRenderer spriteRenderer;
 
-    public Text textMesh;
+    public Text textOfCount;
+    public Text textOfHealth;
+    public Text textOfName;
 
     void Start()
     {
         soldierData = GetComponent<SoldierData>();
-        textMesh.rectTransform.anchoredPosition = transform.position * 54;
+        textOfCount.rectTransform.anchoredPosition = (Vector2)transform.position * 12f + new Vector2(0, -20);
     }
 
     // Update is called once per frame
     void Update()
     {
-        //textMesh.rectTransform.anchoredPosition = (Vector2)transform.position * 12f + new Vector2(0, -20);
-        //textMesh.text = soldierData.count.ToString();
+        textOfHealth.rectTransform.anchoredPosition = (Vector2)transform.position * 12f + new Vector2(0, 25);
+        textOfName.rectTransform.anchoredPosition = (Vector2)transform.position * 12f + new Vector2(0, 45);
+        textOfCount.rectTransform.anchoredPosition = (Vector2)transform.position * 12f + new Vector2(0, -25);
+
+        textOfHealth.text = $"{soldierData.curHealth} / {soldierData.maxHealth}";
+        textOfName.text = $"{soldierData.name}";
+        textOfCount.text = soldierData.count.ToString();
     }
 }

@@ -6,7 +6,6 @@ using Karsss.Debug;
 
 public class SoldierMoveControll : MonoBehaviour
 {
-	public int indexX = 0, indexY = 0;
 	public float size = 1.0f;
 	public Transform zeroCoordinate;
 	public float speed;
@@ -24,18 +23,18 @@ public class SoldierMoveControll : MonoBehaviour
 	}
 	public void SetPosition(int x, int y, float size = 1.0f)
 	{
-		indexX = x;
-		indexY = y;
+		soldierData.indexX = x;
+		soldierData.indexY = y;
 		this.size = size;
 
-		PathfindingHex.Instance.SetWalking(indexX, indexY, !PathfindingHex.Instance.GetGrid().GetValue(indexX, indexY).Value.IsWalking);
+		PathfindingHex.Instance.SetWalking(soldierData.indexX, soldierData.indexY, !PathfindingHex.Instance.GetGrid().GetValue(soldierData.indexX, soldierData.indexY).Value.IsWalking);
 		transform.position = PathfindingHex.Instance.GetGrid().GetPositionFromWorld(x, y);
 	}
 	public void SetPosition(HexPathNode hexPos, float size = 1.0f)
 	{
 		hexPosition = hexPos;
-		indexX = hexPosition.X;
-		indexY = hexPosition.Y;
+		soldierData.indexX = hexPosition.X;
+		soldierData.indexY = hexPosition.Y;
 		this.size = size;
 
 		transform.position = PathfindingHex.Instance.GetGrid()[hexPosition.Y, hexPosition.X].worldPosition;
@@ -48,9 +47,15 @@ public class SoldierMoveControll : MonoBehaviour
 	public bool GoToPosition(int x, int y)
 	{
 		//PathfindingHex.Instance.GetGrid().GetXY(transform.position, out indexX, out indexY);
-		hexPathNodes = PathfindingHex.Instance.FindPath(indexX, indexY, x, y, soldierData.stepRadius);
+		hexPathNodes = PathfindingHex.Instance.FindPath(soldierData.indexX, soldierData.indexY, x, y, soldierData.stepRadius);
 		index = 0;
-		if(hexPathNodes != null)targetPos = hexPathNodes[index].HexParant.worldPosition;
+		if(hexPathNodes != null)
+		{
+			targetPos = hexPathNodes[index].HexParant.worldPosition;
+
+			soldierData.SetArrayPos(null, soldierData.indexX, soldierData.indexY);
+			soldierData.SetArrayPos(soldierData, x, y);
+		}
 
 		return hexPathNodes != null;
 	}
@@ -62,10 +67,10 @@ public class SoldierMoveControll : MonoBehaviour
 
 			if (targetPos != null && Mathf.Abs((transform.position - targetPos).x) < 0.1f && Mathf.Abs((transform.position - targetPos).y) < 0.1f)
 			{
-				PathfindingHex.Instance.SetWalking(indexX, indexY, !PathfindingHex.Instance.GetGrid().GetValue(indexX, indexY).Value.IsWalking);
+				PathfindingHex.Instance.SetWalking(soldierData.indexX, soldierData.indexY, !PathfindingHex.Instance.GetGrid().GetValue(soldierData.indexX, soldierData.indexY).Value.IsWalking);
 
-				PathfindingHex.Instance.GetGrid().GetXY(transform.position, out indexX, out indexY);
-				PathfindingHex.Instance.SetWalking(indexX, indexY, !PathfindingHex.Instance.GetGrid().GetValue(indexX, indexY).Value.IsWalking);
+				PathfindingHex.Instance.GetGrid().GetXY(transform.position, out soldierData.indexX, out soldierData.indexY);
+				PathfindingHex.Instance.SetWalking(soldierData.indexX, soldierData.indexY, !PathfindingHex.Instance.GetGrid().GetValue(soldierData.indexX, soldierData.indexY).Value.IsWalking);
 				PathfindingHex.Instance.mapVisual.UpdateFindMapVisual();
 
 				if (index < hexPathNodes.Count)
