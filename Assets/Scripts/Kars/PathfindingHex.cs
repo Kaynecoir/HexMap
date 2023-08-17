@@ -7,7 +7,7 @@ namespace Karsss.Object
 {
     public class PathfindingHex
     {
-		private const int MOVE_STRAIGHT_COST = 10;
+		private const int MOVE_STRAIGHT_COST = 1;
 
 		private static PathfindingHex instance;
 		public static PathfindingHex Instance 
@@ -101,11 +101,11 @@ namespace Karsss.Object
 		{
 			startNode = hexGrid[y, x].Value;
 		}
-		public List<HexPathNode> FindPath(int endX, int endY)
+		public List<HexPathNode> FindPath(int endX, int endY, int halfRadius = -1)
 		{
-			return FindPath(startNode.X, startNode.Y, endX, endY);
+			return FindPath(startNode.X, startNode.Y, endX, endY, halfRadius);
 		}
-		public List<HexPathNode> FindPath(int startX, int startY, int endX, int endY)
+		public List<HexPathNode> FindPath(int startX, int startY, int endX, int endY, int halfRadius = -1)
 		{
 
 			startNode = hexGrid.GetValue(startX, startY).Value;
@@ -139,6 +139,7 @@ namespace Karsss.Object
 					// Final
 					List<HexPathNode> way = CalculatePath(endNode);
 					FindWay?.Invoke(endNode);
+
 					return way;
 				}
 
@@ -150,16 +151,21 @@ namespace Karsss.Object
 				{
 					if (closedList.Contains(neighbourNode)) continue;
 
-					int tentativeGCost = currentNode.GCost + CalculateDistance(currentNode, neighbourNode);
+					int tentativeGCost = currentNode.GCost + CalculateDistance(currentNode, neighbourNode);	
+
+					
 
 					if (tentativeGCost < neighbourNode.GCost)
+					// Если поля neighbourNode нет в openList, то GCost в любом случае будет максимальной
+					// Иначе условие сработает если через neighbourNode пройти быстрее чем предпологалось ранее
+					// Так же если halfRadius не равен -1 то учитывается удалённость от начальной точки, иначе GCost
 					{
 						neighbourNode.CameFromNode = currentNode;
 						neighbourNode.GCost = tentativeGCost;
 						neighbourNode.HCost = CalculateDistance(neighbourNode, endNode);
 						neighbourNode.CalculateFCost();
 
-						if (!openList.Contains(neighbourNode))
+						if (!openList.Contains(neighbourNode) && (halfRadius == -1 || tentativeGCost <= halfRadius * 2))
 						{
 							openList.Add(neighbourNode);
 							AddToOpenList?.Invoke(neighbourNode);
@@ -205,8 +211,8 @@ namespace Karsss.Object
 
 			if(hexGrid.isVertical)
 			{
-				distanceX = Mathf.Abs(a.HexParant.worldPosition.x - b.HexParant.worldPosition.x) / hexGrid.littleRadius;
-				distanceY = Mathf.Abs(a.HexParant.worldPosition.y - b.HexParant.worldPosition.y) * 2 / Mathf.Sqrt(3) / hexGrid.littleRadius;
+				distanceX = Mathf.Abs(a.HexParant.worldPosition.x - b.HexParant.worldPosition.x) / hexGrid.littleRadius;	// Получаем значение равное количеству малых радусув между объектами в оси x
+				distanceY = Mathf.Abs(a.HexParant.worldPosition.y - b.HexParant.worldPosition.y) * 2 / Mathf.Sqrt(3) / hexGrid.littleRadius; // Получаем значение равное количеству малых радусув между объектами в оси y
 				minim = Mathf.Min(distanceX, distanceY / Mathf.Sqrt(3));
 				distance = Mathf.RoundToInt(distanceX + 2 / Mathf.Sqrt(3) * distanceY - minim);
 			}
@@ -252,17 +258,17 @@ namespace Karsss.Object
 			this.grid.ChangeValue += UpdateFindMapVisual;
 			this.meshFilter = meshFilter;
 			this.transform = transform;
-			//pathfinding.AddToOpenList += (HexPathNode node) => { UpdateNodeOfMapVisual(node, 0.2f);/*UnityEngine.Debug.Log(node);*/ };
-			//pathfinding.AddToClosedList += (HexPathNode node) => { UpdateNodeOfMapVisual(node, 0.6f); };
-			//pathfinding.FindWay += (HexPathNode node) =>
-			//{
-			//	HexPathNode current = node;
-			//	while (current != null)
-			//	{
-			//		UpdateNodeOfMapVisual(current, 0.99f);
-			//		current = current.CameFromNode;
-			//	}
-			//};
+			pathfinding.AddToOpenList += (HexPathNode node) => { UpdateNodeOfMapVisual(node, 0.2f);/*UnityEngine.Debug.Log(node);*/ };
+			pathfinding.AddToClosedList += (HexPathNode node) => { UpdateNodeOfMapVisual(node, 0.6f); };
+			pathfinding.FindWay += (HexPathNode node) =>
+			{
+				HexPathNode current = node;
+				while (current != null)
+				{
+					UpdateNodeOfMapVisual(current, 0.99f);
+					current = current.CameFromNode;
+				}
+			};
 			pathfinding.ChangeWalking += (HexPathNode node) => { UpdateNodeOfMapVisual(node, 0.1f); };
 
 			grid.CreateMeshArray(out vertices, out normals, out uv, out triangles);

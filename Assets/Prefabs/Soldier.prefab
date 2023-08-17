@@ -236,6 +236,7 @@ MonoBehaviour:
   maxHealth: 10
   curHealth: 10
   count: 1
+  stepRadius: 3
   testingHex: {fileID: 0}
   moveControll: {fileID: 4182572740836674035}
   ui: {fileID: 3941172025460475504}

@@ -20,7 +20,6 @@ public class SoldierMoveControll : MonoBehaviour
 
 	private void Start()
 	{
-		Debug.Log("4 " + name);
 		soldierData = GetComponent<SoldierData>();
 	}
 	public void SetPosition(int x, int y, float size = 1.0f)
@@ -49,7 +48,7 @@ public class SoldierMoveControll : MonoBehaviour
 	public bool GoToPosition(int x, int y)
 	{
 		//PathfindingHex.Instance.GetGrid().GetXY(transform.position, out indexX, out indexY);
-		hexPathNodes = PathfindingHex.Instance.FindPath(indexX, indexY, x, y);
+		hexPathNodes = PathfindingHex.Instance.FindPath(indexX, indexY, x, y, soldierData.stepRadius);
 		index = 0;
 		if(hexPathNodes != null)targetPos = hexPathNodes[index].HexParant.worldPosition;
 

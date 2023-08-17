@@ -7,6 +7,7 @@ public class SoldierData : MonoBehaviour
     public int maxHealth;
     public int curHealth;
     public int count = 1;
+    public int stepRadius;
 
     public TestingHex testingHex;
 
@@ -14,7 +15,6 @@ public class SoldierData : MonoBehaviour
     public SoldierUI ui;
     void Start()
     {
-        Debug.Log("1 " + name);
         moveControll = GetComponent<SoldierMoveControll>();
         ui = GetComponent<SoldierUI>();
     }

@@ -18,7 +18,6 @@ public class TestingHex : MonoBehaviour
 	public SoldierData currentSoldier;
 	private void Start()
 	{
-		Debug.Log("3");
 		Vector3 pos = new Vector3(radius * (isVertical ? Mathf.Sin(Mathf.PI / 3) : 1), radius * (!isVertical ? Mathf.Sin(Mathf.PI / 3) : 1));
 		PathfindingHex.Instance.SetGrid(height, width, radius, transform.position, isVertical);
 		hexGrid = PathfindingHex.Instance.GetGrid();
@@ -72,7 +71,6 @@ public class TestingHex : MonoBehaviour
 	public void NextSoldier()
 	{
 		int i = soldList.IndexOf(currentSoldier);
-		Debug.Log(i+1);
 		ChooseSoldier(soldList[(i + 1) < soldList.Count ? (i + 1) : 0]);
 	}
 }

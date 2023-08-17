@@ -15,7 +15,6 @@ public class SoldierUI : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("2 " + name);
         soldierData = GetComponent<SoldierData>();
         textMesh.rectTransform.anchoredPosition = transform.position * 54;
     }
@@ -23,10 +22,7 @@ public class SoldierUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //textMesh.rectTransform.anchoredPosition = (canvas.renderingDisplaySize + (Vector2)transform.position) * 10 + canvas.;
-        textMesh.rectTransform.anchoredPosition = (Vector2)transform.position * 12f + new Vector2(0, -20);
-        textMesh.text = soldierData.count.ToString();
-        Debug.Log($"canvas.renderingDisplaySize / 2: {(Vector2)transform.position * 12f}\n" +
-            $"(Vector2)transform.position * canvas.referencePixelsPerUnit: {(Vector2)transform.position * 10.8f}");
+        //textMesh.rectTransform.anchoredPosition = (Vector2)transform.position * 12f + new Vector2(0, -20);
+        //textMesh.text = soldierData.count.ToString();
     }
 }
