@@ -14,6 +14,17 @@ namespace Karsss.Debug
 			worldPosition = new Vector3(worldPosition.x, worldPosition.y);
 			return worldPosition;
 		}
+
+		public static Vector3 GetMouseScreenPosition() => GetMouseScreenPosition(Vector3.zero, Input.mousePosition, Camera.main);
+		public static Vector3 GetMouseScreenPosition(Vector3 nullCoordinate) => GetMouseScreenPosition(nullCoordinate, Input.mousePosition, Camera.main);
+		public static Vector3 GetMouseScreenPosition(Vector3 nullCoordinate, Vector3 worldPosition, Camera worldCamera)
+		{
+			Vector3 screenPosition = worldCamera.ScreenToWorldPoint(worldPosition) - nullCoordinate;
+			UnityEngine.Debug.Log("worldPosition " + worldPosition);
+			screenPosition = new Vector3(screenPosition.x, screenPosition.y);
+			return screenPosition;
+		}
+
 		public static TextMesh CreateWorldText(string text, Transform parent, Vector3 localPosition, int fontSize, Color color, TextAnchor textAnchor, TextAlignment textAlignment, int soringOrder)
 		{
 			GameObject gameObject = new GameObject("World Text", typeof(TextMesh));

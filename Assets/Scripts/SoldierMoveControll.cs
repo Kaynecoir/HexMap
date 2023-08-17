@@ -4,16 +4,15 @@ using UnityEngine;
 using Karsss.Object;
 using Karsss.Debug;
 
-public class Soldier : MonoBehaviour
+public class SoldierMoveControll : MonoBehaviour
 {
 	public int indexX = 0, indexY = 0;
 	public float size = 1.0f;
 	public Transform zeroCoordinate;
 	public float speed;
-	public SpriteRenderer spriteRenderer;
 
 	protected float positionX, positionY;
-	protected GameObject square;
+	protected SoldierData soldierData;
 	protected Vector3 targetPos;
 	protected List<HexPathNode> hexPathNodes;
 	protected HexPathNode hexPosition;
@@ -21,7 +20,8 @@ public class Soldier : MonoBehaviour
 
 	private void Start()
 	{
-		spriteRenderer = GetComponent<SpriteRenderer>();
+		Debug.Log("4 " + name);
+		soldierData = GetComponent<SoldierData>();
 	}
 	public void SetPosition(int x, int y, float size = 1.0f)
 	{
@@ -52,13 +52,13 @@ public class Soldier : MonoBehaviour
 		hexPathNodes = PathfindingHex.Instance.FindPath(indexX, indexY, x, y);
 		index = 0;
 		if(hexPathNodes != null)targetPos = hexPathNodes[index].HexParant.worldPosition;
+
 		return hexPathNodes != null;
 	}
 	private void Update()
 	{
 		if (hexPathNodes != null)
 		{
-
 			transform.position += (targetPos - (transform.position)).normalized * speed * Time.deltaTime;
 
 			if (targetPos != null && Mathf.Abs((transform.position - targetPos).x) < 0.1f && Mathf.Abs((transform.position - targetPos).y) < 0.1f)

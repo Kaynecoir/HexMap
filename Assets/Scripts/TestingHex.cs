@@ -14,10 +14,11 @@ public class TestingHex : MonoBehaviour
 	public float radius;
 	public bool isVertical;
 	public GameObject soldierObject;
-	public List<Soldier> soldList;
-	public Soldier currentSoldier;
+	public List<SoldierData> soldList;
+	public SoldierData currentSoldier;
 	private void Start()
 	{
+		Debug.Log("3");
 		Vector3 pos = new Vector3(radius * (isVertical ? Mathf.Sin(Mathf.PI / 3) : 1), radius * (!isVertical ? Mathf.Sin(Mathf.PI / 3) : 1));
 		PathfindingHex.Instance.SetGrid(height, width, radius, transform.position, isVertical);
 		hexGrid = PathfindingHex.Instance.GetGrid();
@@ -27,9 +28,10 @@ public class TestingHex : MonoBehaviour
 		findMap = new FindHexMapVisual(PathfindingHex.Instance, meshFilter, transform);
 		PathfindingHex.Instance.mapVisual = findMap;
 
-		foreach(Soldier s in soldList)
+		foreach(SoldierData s in soldList)
 		{
-			s.SetPosition(s.indexX, s.indexY);
+
+			s.moveControll.SetPosition(s.moveControll.indexX, s.moveControll.indexY);
 
 		}
 		ChooseSoldier(soldList[0]);
@@ -52,7 +54,7 @@ public class TestingHex : MonoBehaviour
 
 			if (currentSoldier != null)
 			{
-				if (currentSoldier.GoToPosition(DebugUtilites.GetMouseWorldPosition()))
+				if (currentSoldier.moveControll.GoToPosition(DebugUtilites.GetMouseWorldPosition()))
 				{
 					NextSoldier();
 				}
@@ -60,17 +62,17 @@ public class TestingHex : MonoBehaviour
 		}
 	}
 
-	public void ChooseSoldier(Soldier soldier)
+	public void ChooseSoldier(SoldierData soldier)
 	{
-		if (currentSoldier != null) currentSoldier.spriteRenderer.color = Color.green;
+		if (currentSoldier != null) currentSoldier.ui.spriteRenderer.color = Color.green;
 		if (soldier != null) currentSoldier = soldier;
 
-		if (soldier != null) currentSoldier.spriteRenderer.color = Color.white;
+		if (currentSoldier != null) { currentSoldier.ui.spriteRenderer.color = Color.white; }
 	}
 	public void NextSoldier()
 	{
 		int i = soldList.IndexOf(currentSoldier);
-		Debug.Log(i);
+		Debug.Log(i+1);
 		ChooseSoldier(soldList[(i + 1) < soldList.Count ? (i + 1) : 0]);
 	}
 }
