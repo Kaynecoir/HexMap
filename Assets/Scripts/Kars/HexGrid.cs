@@ -235,7 +235,7 @@ namespace Karsss.Object
 		}
 		public Vector3Int GetXY(Vector3 CursorPosition, out int x, out int y, out int seq)
 		{
-			x = 0; y = 0; seq = 0;
+			seq = 0;
 			Vector3 CursorToCenter = CursorPosition - zeroCoord;
 			if (isVertical)
 			{

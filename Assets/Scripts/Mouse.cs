@@ -30,13 +30,13 @@ public class Mouse : MonoBehaviour
 					else if (seq == 3) { tx = x + y % 2; ty = y - 1; }
 					else if (seq == 4) { tx = x + 1; ty = y; }
 					else if (seq == 5) { tx = x + y % 2; ty = y + 1; }
-					if (currentSoldier.moveControll.GoToPosition(tx, ty) || (testingHex.currentSoldier.indexY == ty && testingHex.currentSoldier.indexX == tx)) { testingHex.NextSoldier(); }
+					//if (currentSoldier.moveControll.GoToPosition(tx, ty) || (testingHex.currentSoldier.indexY == ty && testingHex.currentSoldier.indexX == tx)) { testingHex.NextSoldier(); }
 				}
 				else
 				{
 
 				}
-				currentSoldier.Attack(targetSoldier);
+				//if(targetSoldier != null) currentSoldier.Attack(targetSoldier);
 			}
 		}
 	}

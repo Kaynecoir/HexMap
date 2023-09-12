@@ -29,7 +29,7 @@ public class SoldierData : MonoBehaviour
         };
         AttackSoldier += (SoldierData targetSoldier) =>
         {
-            Debug.Log("Attack " + targetSoldier.curHealth);
+            Debug.Log($"{this.name} Attack {targetSoldier.name} {targetSoldier.curHealth} / {targetSoldier.maxHealth}");
         };
     }
 
