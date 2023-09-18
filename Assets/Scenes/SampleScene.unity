@@ -374,11 +374,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6694430768383062598, guid: c09eafdfd6d352644a890a7881ed2220, type: 3}
       propertyPath: curHealth
-      value: 12
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 6694430768383062598, guid: c09eafdfd6d352644a890a7881ed2220, type: 3}
       propertyPath: maxHealth
-      value: 12
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 6694430768383062598, guid: c09eafdfd6d352644a890a7881ed2220, type: 3}
       propertyPath: stepRadius
@@ -390,7 +390,7 @@ PrefabInstance:
       objectReference: {fileID: 522469670}
     - target: {fileID: 6694430768383062598, guid: c09eafdfd6d352644a890a7881ed2220, type: 3}
       propertyPath: attackPower
-      value: 10
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 8053595550879156644, guid: c09eafdfd6d352644a890a7881ed2220, type: 3}
       propertyPath: m_Name
@@ -1324,11 +1324,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6694430768383062598, guid: c09eafdfd6d352644a890a7881ed2220, type: 3}
       propertyPath: curHealth
-      value: 20
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 6694430768383062598, guid: c09eafdfd6d352644a890a7881ed2220, type: 3}
       propertyPath: maxHealth
-      value: 20
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 6694430768383062598, guid: c09eafdfd6d352644a890a7881ed2220, type: 3}
       propertyPath: testingHex
