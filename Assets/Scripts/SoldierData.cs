@@ -32,6 +32,7 @@ public class SoldierData : MonoBehaviour
             Debug.Log($"{this.name} Attack {targetSoldier.name} on {attackPower * count}\nNow Army[{targetSoldier.count}] HP[{targetSoldier.curHealth} / {targetSoldier.maxHealth}]");
         };
         // I have problem. Ok? I can't dream project and write code...
+        // Yes. I still can't work. Today I'm sit 8 hour in army center
     }
 
     void Update()
