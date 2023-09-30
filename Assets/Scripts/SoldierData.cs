@@ -40,6 +40,7 @@ public class SoldierData : MonoBehaviour
         // ...
         // Yes, yes, yes, go to the hell
 	// ****
+        // ****x2
     }
 
     void Update()
