@@ -42,6 +42,7 @@ public class SoldierData : MonoBehaviour
     	// ****
         // ****x2
         // What?
+        // HZ?
     }
 
     void Update()
