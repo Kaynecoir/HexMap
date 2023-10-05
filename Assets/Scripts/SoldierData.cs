@@ -34,17 +34,18 @@ public class SoldierData : MonoBehaviour
         // I have problem. Ok? I can't dream project and write code...
         // Yes. I still can't work. Today I'm sit 8 hour in army center
         // Yes. Today Too...
-	    // Yes, I hate me...
+        // Yes, I hate me...
         // Go to the Hell f***ing b****rd
         // He-elp me-e. I have so much problems... :(
         // ...
         // Yes, yes, yes, go to the hell
-    	// ****
+        // ****
         // ****x2
         // What?
         // HZ?
-	// Tutu
+        // Tutu
         // Tuturu
+        // The Resistance
     }
 
     void Update()
