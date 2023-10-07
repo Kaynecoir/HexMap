@@ -47,6 +47,7 @@ public class SoldierData : MonoBehaviour
         // Tuturu
         // The Resistance
         // I am a nation, I am a million faces
+        // *****
     }
 
     void Update()
