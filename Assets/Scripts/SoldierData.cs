@@ -31,26 +31,27 @@ public class SoldierData : MonoBehaviour
         {
             Debug.Log($"{this.name} Attack {targetSoldier.name} on {attackPower * count}\nNow Army[{targetSoldier.count}] HP[{targetSoldier.curHealth} / {targetSoldier.maxHealth}]");
         };
-        // I have problem. Ok? I can't dream project and write code...
-        // Yes. I still can't work. Today I'm sit 8 hour in army center
-        // Yes. Today Too...
-        // Yes, I hate me...
-        // Go to the Hell f***ing b****rd
-        // He-elp me-e. I have so much problems... :(
-        // ...
-        // Yes, yes, yes, go to the hell
-        // ****
-        // ****x2
-        // What?
-        // HZ?
-        // Tutu
-        // Tuturu
-        // The Resistance
-        // I am a nation, I am a million faces
-        // *****
-	// I'm relax, okay?
-        // Oppenheimer!!
-	// Doctor Who are you?
+        // 21.09.2023
+        // 22.09.2023
+        // 23.09.2023
+        // 24.09.2023
+        // 25.09.2023
+        // 26.09.2023
+        // 27.09.2023
+        // 28.09.2023
+        // 29.09.2023
+        // 30.09.2023
+        // 01.10.2023
+        // 02.10.2023
+        // 03.10.2023
+        // 04.10.2023
+        // 05.10.2023
+        // 06.10.2023
+        // 07.10.2023
+        // 08.10.2023
+        // 09.10.2023
+        // 10.10.2023
+        // 11.10.2023
     }
 
     void Update()
