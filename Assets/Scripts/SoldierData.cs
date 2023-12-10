@@ -105,6 +105,7 @@ public class SoldierData : MonoBehaviour
         // 06.12.2023
         // 07.12.2023
         // 08.12.2023
+        // 09.12.2023
     }
 
     void Update()
